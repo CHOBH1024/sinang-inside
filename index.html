@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>신앙인사이드 (Sinang-inside) ⛪</title>
+<style>
+  /* ── 디자인 시스템 & 변수 ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #0D5C3A; /* 영성 깊은 포레스트 에메랄드 */
+    --primary-light: #E6F3ED;
+    --primary-dark:  #083D26;
+    --left-clr:      #B8860B; /* 수직적/믿음/은사 - 골드 */
+    --left-clr-light:#FFFDF0;
+    --right-clr:     #2A6F97; /* 수평적/실천/의지 - 블루 */
+    --right-clr-light:#F0FAFF;
+    --bg:            #F4F7F6; /* 산뜻하고 정갈한 민트 크림 */
+    --card:          #FFFFFF;
+    --text:          #2D3748;
+    --text-sub:      #718096;
+    --border:        #E2E8F0;
+    --radius:        18px;
+    --shadow-sm:     0 2px 6px rgba(13,92,58,0.06);
+    --shadow-md:     0 10px 25px rgba(13,92,58,0.08);
+    --font-sys:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: var(--font-sys);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  /* ── 전체 컨테이너 ── */
+  #app {
+    max-width: 440px;
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    box-shadow: 0 0 30px rgba(0,0,0,0.03);
+    position: relative;
+  }
+
+  /* ── 화면 레이아웃 ── */
+  .screen { display: none; flex-direction: column; flex: 1; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ── 헤더 스타일 ── */
+  .header {
+    background: var(--card);
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+  }
+  .header h1 {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .header-desc {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* 진행 상태 바 */
+  .progress-wrap {
+    background: var(--border);
+    height: 5px;
+    width: 100%;
+  }
+  .progress-fill {
+    height: 5px;
+    background: var(--primary);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ── 인트로 화면 ── */
+  #intro-screen { background: var(--bg); }
+  .intro-content {
+    flex: 1;
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .intro-title-group { text-align: center; margin-bottom: 10px; }
+  .intro-title-group h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+  }
+  .intro-title-group p { font-size: 14px; color: var(--text-sub); }
+
+  .input-field { display: flex; flex-direction: column; gap: 10px; }
+  .input-field > label {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .choice-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choice-item {
+    flex: 1 1 28%;
+    min-width: 80px;
+    padding: 13px 8px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    background: rgba(113,128,150,0.08);
+    color: var(--text-sub);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice-item:hover { background: rgba(113,128,150,0.12); }
+  .choice-item.selected {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(13,92,58,0.2);
+  }
+  .choice-row.half .choice-item { flex: 1 1 45%; }
+  
+  .text-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    color: var(--text);
+    background: var(--card);
+    transition: border-color 0.2s;
+  }
+  .text-input:focus { border-color: var(--primary); }
+  .intro-footer { padding: 12px 24px 36px; }
+
+  /* ── 게임 화면 ── */
+  .game-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cards-container {
+    display: flex;
+    gap: 16px;
+    padding: 24px 20px 0;
+    align-items: flex-start;
+  }
+  .balance-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-img-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card);
+    position: relative;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s;
+  }
+  .card-img-wrap img, .card-img-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+  .card-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-align: center;
+    line-height: 1.4;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-score {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .balance-card.left .card-score { color: var(--left-clr); }
+  .balance-card.right .card-score { color: var(--right-clr); }
+
+  .vs-badge-wrap {
+    display: flex;
+    align-self: center;
+    margin-top: -30px;
+    z-index: 10;
+  }
+  .vs-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(13,92,58,0.3);
+  }
+
+  /* 슬라이더 영역 */
+  .control-section {
+    padding: 24px 24px 16px;
+  }
+  .slider-guide-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .slider-guide-labels span {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+
+  .range-container {
+    position: relative;
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    background: linear-gradient(
+      to right,
+      var(--left-clr) 0%,
+      var(--left-clr) var(--val, 50%),
+      var(--right-clr) var(--val, 50%),
+      var(--right-clr) 100%
+    );
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--primary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    cursor: grab;
+    transition: transform 0.1s, background-color 0.1s;
+  }
+  input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+    cursor: grabbing;
+    background-color: var(--primary-light);
+  }
+
+  .step-text {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-top: 8px;
+  }
+
+  /* 네비게이션 */
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 24px 36px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 28px;
+    border-radius: 50px;
+    border: none;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(13,92,58,0.25);
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-ghost {
+    background: var(--card);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-success {
+    background: #0D5C3A;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(13,92,58,0.25);
+  }
+  .btn-success:hover { background: #083D26; }
+  .btn-full { width: 100%; justify-content: center; border-radius: var(--radius); padding: 16px; font-size: 16px; }
+  .btn-outline { background: transparent; color: var(--text-sub); border: 1.5px solid var(--border); }
+  .btn-outline:hover { background: var(--card); color: var(--text); }
+  .btn-placeholder { width: 100px; visibility: hidden; }
+
+  /* ── 결과 요약 화면 ── */
+  #result-screen { background: var(--bg); }
+  #capture-root { background: var(--bg); width: 100%; }
+  
+  .result-header {
+    background: var(--card);
+    padding: 28px 24px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-header h2 {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--primary-dark);
+    margin-bottom: 6px;
+  }
+  .result-meta-info {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  #capture-area {
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg);
+  }
+
+  .result-item-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(13,92,58,0.04);
+  }
+  .result-card-header {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+  .result-values-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+  .result-label-box { display: flex; flex-direction: column; gap: 4px; }
+  .result-label-box .lbl { font-size: 14px; font-weight: 700; color: var(--text); }
+  .result-label-box .val { font-size: 24px; font-weight: 900; }
+  .result-label-box.left .val { color: var(--left-clr); }
+  .result-label-box.right .val { color: var(--right-clr); text-align: right; }
+  .result-label-box.right { text-align: right; }
+
+  /* 가로 막대 그래프 */
+  .ratio-bar-track {
+    height: 12px;
+    border-radius: 6px;
+    background: var(--border);
+    overflow: hidden;
+    display: flex;
+  }
+  .ratio-bar-left-fill { background: var(--left-clr); border-radius: 6px 0 0 6px; transition: width 0.5s ease; }
+  .ratio-bar-right-fill { background: var(--right-clr); border-radius: 0 6px 6px 0; flex: 1; }
+
+  .stat-badge {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-top: 10px;
+    line-height: 1.5;
+    padding: 6px 10px;
+    background: rgba(13,92,58,0.03);
+    border-radius: 8px;
+    border: 0.5px solid rgba(13,92,58,0.05);
+  }
+
+  .result-buttons-group {
+    padding: 8px 20px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── 다른 사람 결과 화면 ── */
+  #others-screen { background: var(--bg); }
+  .others-legend-box {
+    padding: 16px 20px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-sub);
+  }
+  .others-legend-box b { color: var(--primary); }
+  .table-responsive-wrap {
+    padding: 12px 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.statistics-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    white-space: nowrap;
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .statistics-table th, .statistics-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .statistics-table th {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 800;
+  }
+  .statistics-table tbody tr:nth-child(even) { background: #FAFDFB; }
+  .statistics-table .total-stat-row { background: #EDF4F1; font-weight: 800; color: var(--text); }
+  .statistics-table .total-stat-row td { border-top: 1.5px solid var(--border); }
+  
+  .total-count-label {
+    padding: 4px 20px;
+    font-size: 13px;
+    color: var(--text-sub);
+    text-align: right;
+    font-weight: 700;
+  }
+  .no-data-alert {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 15px;
+  }
+
+  /* ── 어드민 화면 ── */
+  #admin-screen { background: var(--bg); }
+  .admin-header-row {
+    background: var(--card);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .admin-header-row h2 { font-size: 18px; font-weight: 900; flex: 1; color: var(--primary); }
+
+  .admin-items-list {
+    padding: 20px 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .admin-item-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+  }
+  .admin-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .admin-item-badge {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .admin-item-header span { font-size: 14px; font-weight: 800; color: var(--text); flex: 1; }
+  .admin-sort-controls { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .icon-btn:hover:not(:disabled) { background: var(--bg); border-color: var(--text-sub); }
+  .icon-btn.delete-action { border-color: #FEE2E2; color: #EF4444; }
+  .icon-btn.delete-action:hover { background: #FEF2F2; border-color: #FCA5A5; }
+
+  .admin-fields-group { display: flex; flex-direction: column; gap: 10px; }
+  .admin-field-row { display: flex; gap: 10px; align-items: center; }
+  .admin-field-row label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-sub);
+    width: 44px;
+    flex-shrink: 0;
+  }
+  .admin-field-row input[type="text"] {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .admin-field-row input[type="text"]:focus { border-color: var(--primary); }
+
+  .admin-img-preview-row { display: flex; gap: 12px; margin-top: 4px; }
+  .admin-img-upload-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .admin-img-upload-box span.title { font-size: 11px; color: var(--text-sub); font-weight: 700; }
+  .admin-img-preview-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    border: 2px dashed var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: var(--text-sub);
+    transition: border-color 0.2s;
+  }
+  .admin-img-preview-container:hover { border-color: var(--primary); }
+  .admin-img-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+
+  .admin-footer-actions { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* ── 공통 토스트 팝업 ── */
+  #toast {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(8,61,38,0.92);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── 관리자 페이지 진입 버튼 (우측 하단 플로팅) ── */
+  #floating-admin-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    z-index: 99;
+    opacity: 0.5;
+    transition: opacity 0.2s, transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #floating-admin-trigger:hover { opacity: 1; transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ══════════ 1단계: 시작 화면 (신앙 정보 입력) ══════════ -->
+  <div id="intro-screen" class="screen active">
+    <div class="header">
+      <h1>신앙인사이드 (Sinang-inside)</h1>
+      <div class="header-desc">시작하기 전에</div>
+    </div>
+    <div class="intro-content">
+      <div class="intro-title-group">
+        <h2>나의 신앙 지표 스캔</h2>
+        <p>기본 정보를 설정한 뒤 자가 진단을 시작해 주세요</p>
+      </div>
+
+      <div class="input-field">
+        <label>연령대</label>
+        <div class="choice-row" id="age-options">
+          <button class="choice-item" data-val="10대">10대</button>
+          <button class="choice-item" data-val="20대">20대</button>
+          <button class="choice-item" data-val="30대">30대</button>
+          <button class="choice-item" data-val="40대">40대</button>
+          <button class="choice-item" data-val="50대">50대</button>
+          <button class="choice-item" data-val="60대 이상">60대 이상</button>
+        </div>
+      </div>
+
+      <div class="input-field">
+        <label>성별</label>
+        <div class="choice-row half" id="gender-options">
+          <button class="choice-item" data-val="남">남성</button>
+          <button class="choice-item" data-val="여">여성</button>
+        </div>
+      </div>
+
+      <div class="input-field">
+        <label>신앙 세대</label>
+        <div class="choice-row" id="generation-options">
+          <button class="choice-item" data-val="1세">1세</button>
+          <button class="choice-item" data-val="축복 2세">축복 2세</button>
+          <button class="choice-item" data-val="성화 2세">성화 2세</button>
+          <button class="choice-item" data-val="3세">3세</button>
+          <button class="choice-item" data-val="기타">기타</button>
+        </div>
+      </div>
+
+      <div class="input-field">
+        <label>이름 (식구명)</label>
+        <input type="text" id="user-name-input" class="text-input" placeholder="이름을 입력하세요" maxlength="20">
+      </div>
+    </div>
+    <div class="intro-footer">
+      <button class="btn btn-primary btn-full" id="start-survey-btn">진단 시작하기 ▶</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 2단계: 게임 화면 (진단 슬라이더) ══════════ -->
+  <div id="game-screen" class="screen">
+    <div class="header">
+      <h1>신앙인사이드 (Sinang-inside)</h1>
+      <div class="header-desc" id="current-question-title">진단 문항을 로드 중입니다...</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="survey-progress-bar" style="width: 0%"></div>
+    </div>
+
+    <div class="game-body">
+      <div class="cards-container">
+        <!-- 좌측 안건 카드 -->
+        <div class="balance-card left">
+          <div class="card-img-wrap" id="left-card-img-container"></div>
+          <div class="card-label" id="left-card-label-text">좌측 안건</div>
+          <div class="card-score" id="left-score-display">5.0</div>
+        </div>
+
+        <div class="vs-badge-wrap">
+          <div class="vs-badge">VS</div>
+        </div>
+
+        <!-- 우측 안건 카드 -->
+        <div class="balance-card right">
+          <div class="card-img-wrap" id="right-card-img-container"></div>
+          <div class="card-label" id="right-card-label-text">우측 안건</div>
+          <div class="card-score" id="right-score-display">5.0</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="control-section">
+          <div class="slider-guide-labels">
+            <span>← 수직·믿음 강조</span>
+            <span>심정적 조화</span>
+            <span>수평·실천 강조 →</span>
+          </div>
+          <div class="range-container">
+            <input type="range" id="survey-slider" min="0" max="100" value="50" style="--val: 50%">
+          </div>
+          <div class="step-text" id="survey-step-indicator">1 / 7</div>
+        </div>
+
+        <div class="nav-bar">
+          <button class="btn btn-ghost" id="prev-question-btn" style="display: none">◀ 이전</button>
+          <div class="btn-placeholder" id="prev-btn-placeholder"></div>
+          <button class="btn btn-primary" id="next-question-btn">다음 ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ 3단계: 결과 화면 ══════════ -->
+  <div id="result-screen" class="screen">
+    <div id="capture-root">
+      <div class="result-header">
+        <h2>나의 신앙 밸런스 결과</h2>
+        <div class="result-meta-info">
+          <span id="result-user-meta">식구 (1세)</span>
+          <span>·</span>
+          <span id="result-date-display">2026-06-11</span>
+        </div>
+      </div>
+
+      <div id="capture-area">
+        <!-- 결과 카드들이 자바스크립트로 생성됨 -->
+      </div>
+    </div>
+
+    <div class="result-buttons-group">
+      <button class="btn btn-primary btn-full" id="btn-copy-screenshot">📷 결과 이미지 복사</button>
+      <button class="btn btn-ghost btn-full" id="btn-show-others">👥 전체 식구 결과 통계</button>
+      <button class="btn btn-outline btn-full" id="btn-restart-game">처음부터 다시 하기</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 4단계: 다른 식구 결과 통계 화면 ══════════ -->
+  <div id="others-screen" class="screen">
+    <div class="admin-header-row">
+      <button class="btn btn-ghost" id="btn-back-to-result" style="padding: 10px 16px">← 돌아가기</button>
+      <h2>식구 성향 통계</h2>
+    </div>
+
+    <div id="others-content-container">
+      <!-- 통계 테이블 및 범례 동적 생성 -->
+    </div>
+
+    <div class="admin-footer-actions">
+      <button class="btn btn-primary btn-full" id="btn-export-csv">📊 엑셀(CSV) 내보내기</button>
+      <button class="btn btn-outline btn-full" id="btn-clear-local-results">로컬 결과 비우기</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 5단계: 관리자(주제 설정) 화면 ══════════ -->
+  <div id="admin-screen" class="screen">
+    <div class="admin-header-row">
+      <button class="btn btn-ghost" id="btn-close-admin" style="padding: 10px 16px">← 돌아가기</button>
+      <h2>주제 및 서버 관리</h2>
+    </div>
+
+    <!-- 데이터 수집 서버 설정 -->
+    <div class="admin-items-list">
+      <div class="admin-item-card">
+        <div class="admin-item-header">
+          <span>결과 수집 서버 (Google Sheets API)</span>
+        </div>
+        <div class="admin-fields-group">
+          <div class="admin-field-row">
+            <label>웹앱 URL</label>
+            <input type="text" id="admin-api-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+          </div>
+          <p style="font-size:11px; color:var(--text-sub); line-height:1.6; margin-top:4px;">
+            구글 스프레드시트 Apps Script 웹앱 URL을 등록하면 전체 참가자들의 데이터 수집 및 실시간 평균 통계 반영이 가능합니다. 비워둘 시 기기 자체(로컬)의 응답 데이터만 수집합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 주제 편집 리스트 -->
+    <div class="admin-items-list" id="admin-topics-edit-list">
+      <!-- 주제 리스트 렌더링 영역 -->
+    </div>
+
+    <div class="admin-footer-actions">
+      <button class="btn btn-primary btn-full" id="btn-admin-add-topic">+ 새로운 주제 추가</button>
+      <button class="btn btn-full" id="btn-admin-save-all" style="background: #0D5C3A; color: #fff;">저장하기</button>
+      <button class="btn btn-outline btn-full" id="btn-admin-reset-default">초기값으로 전체 리셋</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 플로팅 어드민 진입 버튼 -->
+<button id="floating-admin-trigger" title="설정">⚙️</button>
+
+<!-- 토스트 알림창 -->
+<div id="toast"></div>
+
+<!-- 캡처용 외부 라이브러리 (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+/* ══════════════════════════════════════════
+   기본 데이터 및 초기화 설정
+   세계평화통일가정연합(가정연합) 신앙/믿음 체계 학술 진단 문항
+   - 1. 신앙 실천 지향 (수직 심정 vs 수평 참사랑)
+   - 2. 말씀 체휼 경로 (원리학술 연구 vs 훈독생활 체휼)
+   - 3. 복귀섭리 동력 (혈통전환 은사 vs 5% 책임분담)
+   - 4. 공동체 과제 (식구 치유·내실 vs 신종족메시아 전도)
+   - 5. 효정의 방향 (절대신앙 귀일 vs 주체적·창의적 실천)
+   - 6. 고난의 관점 (탕감조건 수용 vs 하늘심정 소망)
+   - 7. 신앙 정체성 (가정 삼대권 완성 vs 국가·세계 공적생애)
+══════════════════════════════════════════ */
+const DEFAULT_MAIN_TITLE = '어느 쪽에 더 무게 중심을 두시나요?';
+
+// 학술 진단 주제 추천 제목 풀
+const RECOMMEND_TITLES = [
+  '신앙 실천의 내외적 지향성',
+  '말씀 체휼과 교리 이해의 경로',
+  '복귀섭리에서의 은사 대 책임분담',
+  '공동체 내실화와 섭리적 확장성',
+  '효정(孝情)의 수직적 귀일 대 주체적 실천',
+  '고난 극복을 위한 탕감 조건 대 소망적 전진',
+  '참가정 가치 실현 대 공적 사명 완수',
+  '공동체 내부 융합 대 대외적 사회 기여',
+  '전통적 예배 형식 유지 대 미래지향적 변화',
+  '세대 간 심정 계승 대 혁신적 문화 창출'
+];
+
+// 가정연합 신앙진단 7대 핵심 주제 기본 데이터
+const DEFAULT_TOPICS = [
+  { 
+    id: 't1', 
+    title: '신앙 실천의 내외적 지향성', 
+    leftLabel: '하늘부모님과의 1:1 수직적 심정 관계 정립', 
+    rightLabel: '이웃과 사회를 향한 참사랑 실천 및 섭리 활동', 
+    value: 50 
+  },
+  { 
+    id: 't2', 
+    title: '말씀 체휼과 교리 이해의 경로', 
+    leftLabel: '원리강론의 학술적·논리적 분석과 교리 이해', 
+    rightLabel: '일상 속 훈독생활과 삶을 통한 은혜의 체휼', 
+    value: 50 
+  },
+  { 
+    id: 't3', 
+    title: '복귀섭리에서의 은사 대 책임분담', 
+    leftLabel: '참부모님을 통한 축복의 혈통 전환과 영적 구원', 
+    rightLabel: '개인의 5% 책임분담 완수와 개성완성 노력', 
+    value: 50 
+  },
+  { 
+    id: 't4', 
+    title: '공동체 내실화와 섭리적 확장성', 
+    leftLabel: '기존 식구들의 심정적 치유와 영적 내실화', 
+    rightLabel: '신종족메시아 사명 완수를 위한 외부 전도와 환경 창조', 
+    value: 50 
+  },
+  { 
+    id: 't5', 
+    title: '효정(孝情)의 수직적 귀일 대 주체적 실천', 
+    leftLabel: '절대신앙·절대사랑·절대복종의 심정적 귀일', 
+    rightLabel: '주체적이고 창의적인 실천을 통한 기쁨 환원', 
+    value: 50 
+  },
+  { 
+    id: 't6', 
+    title: '고난 극복을 위한 탕감 조건 대 소망적 전진', 
+    leftLabel: '고난과 시련을 나의 업과 죄를 탕감하는 훈련으로 수용', 
+    rightLabel: '미래의 희망과 하늘의 심정 세계를 중심한 소망적 전진', 
+    value: 50 
+  },
+  { 
+    id: 't7', 
+    title: '참가정 가치 실현 대 공적 사명 완수', 
+    leftLabel: '가정 안에서 삼대권 완성 및 참가정 가치 실현', 
+    rightLabel: '국가와 세계적 섭리에 동참하는 공적 생애 구축', 
+    value: 50 
+  }
+];
+
+// SVG 생성 유틸리티 함수 (각 주제별 상징화된 기호 일러스트화)
+function generateSVG(emoji, keyword, bgColor, textColor) {
+  const cleanKeyword = keyword.replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&#39;','"':'&quot;'}[c]));
+  const textLengthAdjust = cleanKeyword.length > 8 ? ' textLength="180" lengthAdjust="spacingAndGlyphs"' : '';
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="${bgColor}"/>
+    <circle cx="100" cy="95" r="70" fill="#ffffff" opacity="0.4"/>
+    <text x="100" y="112" text-anchor="middle" font-size="90" font-family="sans-serif">${emoji}</text>
+    <rect x="10" y="148" width="180" height="34" rx="8" fill="${textColor}" opacity="0.1"/>
+    <text x="100" y="171" text-anchor="middle" font-size="16" fill="${textColor}" font-weight="800" font-family="sans-serif"${textLengthAdjust}>${cleanKeyword}</text>
+  </svg>`)}`;
+}
+
+// 각 주제별 고유 매칭 이미지
+const DEFAULT_TOPIC_IMAGES = {
+  t1: {
+    left: generateSVG('💜', '수직 심정 정립', '#F5F0FF', '#7C3AED'),
+    right: generateSVG('🌍', '참사랑 사회실천', '#F0FAFF', '#0284C7')
+  },
+  t2: {
+    left: generateSVG('📖', '원리강론 연구', '#F0FFF4', '#16A34A'),
+    right: generateSVG('🧘', '일상 훈독체휼', '#FFFBEB', '#D97706')
+  },
+  t3: {
+    left: generateSVG('💍', '축복 혈통전환', '#FFF0F5', '#DB2777'),
+    right: generateSVG('🚶', '5% 책임분담', '#F0FDF4', '#15803D')
+  },
+  t4: {
+    left: generateSVG('🩹', '식구 심정치유', '#FFF1F2', '#E11D48'),
+    right: generateSVG('📢', '신종족메시아', '#ECFEFF', '#0891B2')
+  },
+  t5: {
+    left: generateSVG('🛐', '절대 귀일', '#EEF2FF', '#4F46E5'),
+    right: generateSVG('💡', '주체적 실천', '#FEF3C7', '#D97706')
+  },
+  t6: {
+    left: generateSVG('✝️', '탕감조건 수용', '#F1F5F9', '#475569'),
+    right: generateSVG('🌅', '소망적 전진', '#FFEDD5', '#EA580C')
+  },
+  t7: {
+    left: generateSVG('🏡', '참가정 가치', '#ECFDF5', '#059669'),
+    right: generateSVG('🏛️', '공적 사명완수', '#F0F9FF', '#0369A1')
+  }
+};
+
+function getTopicsWithDefaults() {
+  return DEFAULT_TOPICS.map(t => ({
+    ...t,
+    leftImage: (DEFAULT_TOPIC_IMAGES[t.id] || {}).left || generateSVG('◀', t.leftLabel.substring(0,6), '#E6F3ED', '#0D5C3A'),
+    rightImage: (DEFAULT_TOPIC_IMAGES[t.id] || {}).right || generateSVG('▶', t.rightLabel.substring(0,6), '#F5F5F5', '#718096')
+  }));
+}
+
+// 로컬 스토리지 키 값 설정
+const LOCAL_STORAGE_TOPICS_KEY = 'sinangInsideTopics';
+const LOCAL_STORAGE_RESULTS_KEY = 'sinangInsideResults';
+
+// ── 데이터 관리 함수 ──
+function loadTopicsData() {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_TOPICS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // 구버전 마이그레이션 및 누락 필드 보안
+      return parsed.map(t => {
+        if (!t.leftImage) {
+          t.leftImage = (DEFAULT_TOPIC_IMAGES[t.id] || {}).left || generateSVG('◀', t.leftLabel.substring(0,6), '#E6F3ED', '#0D5C3A');
+        }
+        if (!t.rightImage) {
+          t.rightImage = (DEFAULT_TOPIC_IMAGES[t.id] || {}).right || generateSVG('▶', t.rightLabel.substring(0,6), '#F5F5F5', '#718096');
+        }
+        return t;
+      });
+    }
+  } catch (e) { console.error('주제 데이터 로드 실패:', e); }
+  return getTopicsWithDefaults();
+}
+
+function saveTopicsData(list) {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_TOPICS_KEY, JSON.stringify(list));
+  } catch (e) { console.error('주제 데이터 저장 실패:', e); }
+}
+
+function loadLocalResults() {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_RESULTS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { console.error('결과 데이터 로드 실패:', e); }
+  return [];
+}
+
+function saveLocalResults(list) {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_RESULTS_KEY, JSON.stringify(list));
+  } catch (e) { console.error('결과 데이터 저장 실패:', e); }
+}
+
+/* ── 결과 수집 서버 연동 (Google Apps Script Web App) ── */
+// 기본 배포된 구글 시트 웹앱 주소
+const DEFAULT_COLLECTOR_URL = 'https://script.google.com/macros/s/AKfycbzUM7f_KOCbGtowLfPheCenL0kEs2pQ9QnCnDSbzBEtruPWEAFnvnqyaSPJ9r_1mne2/exec';
+let CURRENT_COLLECTOR_URL = DEFAULT_COLLECTOR_URL;
+
+// 결과 포스트 (CORS 방지)
+function pushResultToRemote(record) {
+  if (!CURRENT_COLLECTOR_URL) return;
+  try {
+    fetch(CURRENT_COLLECTOR_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(record)
+    }).catch(e => console.warn('리모트 전송 에러:', e));
+  } catch (e) { console.warn('리모트 전송 실패:', e); }
+}
+
+// JSONP 통계 호출
+let jsonpCounter = 0;
+function fetchRemoteResultsList(callback) {
+  if (!CURRENT_COLLECTOR_URL) { callback(null); return; }
+  const callbackName = 'sinangInsideCallback_' + (++jsonpCounter);
+  const scriptElement = document.createElement('script');
+  
+  const finish = (resData) => {
+    try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+    scriptElement.remove();
+    clearTimeout(timeoutId);
+    callback(resData && resData.results ? resData.results : null);
+  };
+  
+  const timeoutId = setTimeout(() => finish(null), 12000);
+  window[callbackName] = finish;
+  
+  scriptElement.onerror = () => finish(null);
+  scriptElement.src = CURRENT_COLLECTOR_URL + (CURRENT_COLLECTOR_URL.indexOf('?') >= 0 ? '&' : '?') +
+    'callback=' + callbackName + '&_t=' + Date.now();
+  document.body.appendChild(scriptElement);
+}
+
+// 로컬 + 서버 데이터 결합
+function mergeAllResults(callback) {
+  const localList = loadLocalResults();
+  if (!CURRENT_COLLECTOR_URL) { callback(localList); return; }
+  
+  fetchRemoteResultsList(remoteList => {
+    if (!remoteList) { callback(localList); return; }
+    const mergedMap = new Map();
+    let index = 0;
+    
+    [...localList, ...remoteList].forEach(record => {
+      if (!record) return;
+      // 고유 ID 기준 중복 제거
+      const key = record.id != null ? 'id_' + record.id : 'key_' + (index++);
+      mergedMap.set(key, record);
+    });
+    callback([...mergedMap.values()]);
+  });
+}
+
+/* ── 상태 변수들 ── */
+let topics = loadTopicsData();
+let activeQuestionIndex = 0;
+let userDetails = { name: '', age: '', gender: '', generation: '' };
+let isCurrentResponseLogged = false;
+
+/* ── 화면 이동 유틸 ── */
+function navigateToScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  
+  // 게임 또는 인트로에서만 플로팅 어드민 버튼 노출
+  const adminFloating = document.getElementById('floating-admin-trigger');
+  if (screenId === 'game-screen' || screenId === 'intro-screen') {
+    adminFloating.style.display = 'flex';
+  } else {
+    adminFloating.style.display = 'none';
+  }
+  
+  // 화면 진입 시 스크롤 상단 고정
+  window.scrollTo(0,0);
+}
+
+function triggerToast(message) {
+  const toastEl = document.getElementById('toast');
+  toastEl.textContent = message;
+  toastEl.classList.add('show');
+  setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+
+// 안전한 HTML 이스케이프
+function escapeHTML(str) {
+  return String(str).replace(/[<>&"']/g, m => ({
+    '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+// 0-100 슬라이더 값을 좌/우 10점 만점 수치로 환산
+function calculateValues(percentage) {
+  const rightVal = Math.round(percentage) / 10;
+  const leftVal = parseFloat((10 - rightVal).toFixed(1));
+  return { left: leftVal, right: rightVal };
+}
+
+/* ══════════════════════════════════════════
+   1단계: 인트로 설정 및 입력 처리
+══════════════════════════════════════════ */
+function initializeIntroScreen() {
+  const setupGroup = (containerId, stateKey) => {
+    const container = document.getElementById(containerId);
+    container.addEventListener('click', e => {
+      const targetBtn = e.target.closest('.choice-item');
+      if (!targetBtn) return;
+      container.querySelectorAll('.choice-item').forEach(b => b.classList.remove('selected'));
+      targetBtn.classList.add('selected');
+      userDetails[stateKey] = targetBtn.dataset.val;
+    });
+  };
+
+  setupGroup('age-options', 'age');
+  setupGroup('gender-options', 'gender');
+  setupGroup('generation-options', 'generation');
+
+  document.getElementById('user-name-input').addEventListener('input', e => {
+    userDetails.name = e.target.value.trim();
+  });
+
+  document.getElementById('start-survey-btn').addEventListener('click', () => {
+    if (!userDetails.name) { triggerToast('이름(식구명)을 입력해 주세요.'); return; }
+    if (!userDetails.age) { triggerToast('연령대를 선택해 주세요.'); return; }
+    if (!userDetails.gender) { triggerToast('성별을 선택해 주세요.'); return; }
+    if (!userDetails.generation) { triggerToast('신앙 세대를 선택해 주세요.'); return; }
+
+    // 슬라이더 상태 중앙값(5:5) 리셋 후 시작
+    topics.forEach(t => t.value = 50);
+    activeQuestionIndex = 0;
+    isCurrentResponseLogged = false;
+    
+    renderGameQuestion();
+    navigateToScreen('game-screen');
+  });
+}
+
+function clearIntroInputs() {
+  userDetails = { name: '', age: '', gender: '', generation: '' };
+  document.querySelectorAll('#intro-screen .choice-item').forEach(b => b.classList.remove('selected'));
+  document.getElementById('user-name-input').value = '';
+}
+
+/* ══════════════════════════════════════════
+   2단계: 게임 플레이 UI 렌더링
+══════════════════════════════════════════ */
+function renderGameQuestion() {
+  const currentTopic = topics[activeQuestionIndex];
+  const totalQuestions = topics.length;
+
+  // 제목 및 진행도 갱신
+  document.getElementById('current-question-title').textContent = currentTopic.title || DEFAULT_MAIN_TITLE;
+  document.getElementById('survey-progress-bar').style.width = `${((activeQuestionIndex + 1) / totalQuestions) * 100}%`;
+  document.getElementById('survey-step-indicator').textContent = `${activeQuestionIndex + 1} / ${totalQuestions}`;
+
+  // 좌우 텍스트 주입
+  document.getElementById('left-card-label-text').textContent = currentTopic.leftLabel;
+  document.getElementById('right-card-label-text').textContent = currentTopic.rightLabel;
+
+  // 좌우 SVG/이미지 주입
+  setCardVisual('left-card-img-container', currentTopic.leftImage, currentTopic.leftLabel);
+  setCardVisual('right-card-img-container', currentTopic.rightImage, currentTopic.rightLabel);
+
+  // 슬라이더 밸류 동기화
+  const rangeInput = document.getElementById('survey-slider');
+  rangeInput.value = currentTopic.value;
+  applySliderChanges(currentTopic.value);
+
+  // 네비게이션 버튼 가시성
+  const prevBtn = document.getElementById('prev-question-btn');
+  const prevPlace = document.getElementById('prev-btn-placeholder');
+  const nextBtn = document.getElementById('next-question-btn');
+
+  if (activeQuestionIndex === 0) {
+    prevBtn.style.display = 'none';
+    prevPlace.style.display = 'block';
+  } else {
+    prevBtn.style.display = 'flex';
+    prevPlace.style.display = 'none';
+  }
+
+  if (activeQuestionIndex === totalQuestions - 1) {
+    nextBtn.textContent = '진단 완료 ✓';
+    nextBtn.className = 'btn btn-success';
+  } else {
+    nextBtn.textContent = '다음 ▶';
+    nextBtn.className = 'btn btn-primary';
+  }
+}
+
+function setCardVisual(elementId, mediaSrc, defaultLabel) {
+  const container = document.getElementById(elementId);
+  container.innerHTML = '';
+  if (mediaSrc) {
+    const visual = document.createElement('img');
+    visual.src = mediaSrc;
+    visual.alt = defaultLabel;
+    visual.onerror = () => { container.innerHTML = createImageFallback(defaultLabel); };
+    container.appendChild(visual);
+  } else {
+    container.innerHTML = createImageFallback(defaultLabel);
+  }
+}
+
+function createImageFallback(label) {
+  return `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background:var(--primary-light); color:var(--primary); font-size:13px; font-weight:800;
+    padding:10px; text-align:center;">${escapeHTML(label)}</div>`;
+}
+
+function applySliderChanges(value) {
+  const sliderInput = document.getElementById('survey-slider');
+  sliderInput.style.setProperty('--val', value + '%');
+  
+  const { left, right } = calculateValues(value);
+  document.getElementById('left-score-display').textContent = left.toFixed(1);
+  document.getElementById('right-score-display').textContent = right.toFixed(1);
+}
+
+// 슬라이더 리스너
+document.getElementById('survey-slider').addEventListener('input', e => {
+  const value = parseInt(e.target.value);
+  topics[activeQuestionIndex].value = value;
+  applySliderChanges(value);
+});
+
+// 이전/다음 리스너
+document.getElementById('prev-question-btn').addEventListener('click', () => {
+  if (activeQuestionIndex > 0) {
+    activeQuestionIndex--;
+    renderGameQuestion();
+  }
+});
+
+document.getElementById('next-question-btn').addEventListener('click', () => {
+  if (activeQuestionIndex < topics.length - 1) {
+    activeQuestionIndex++;
+    renderGameQuestion();
+  } else {
+    processAndShowResults();
+  }
+});
+
+
+/* ══════════════════════════════════════════
+   3단계: 결과 처리 및 렌더링
+══════════════════════════════════════════ */
+function registerSurveyResponse() {
+  if (isCurrentResponseLogged) return;
+  
+  const record = {
+    id: Date.now(),
+    name: userDetails.name || '익명 식구',
+    gender: userDetails.gender || '-',
+    age: userDetails.age || '-',
+    generation: userDetails.generation || '-',
+    date: new Date().toISOString(),
+    answers: topics.map(t => {
+      const { left, right } = calculateValues(t.value);
+      return { 
+        id: t.id, 
+        title: t.title, 
+        leftLabel: t.leftLabel, 
+        rightLabel: t.rightLabel, 
+        value: t.value, 
+        left: left, 
+        right: right 
+      };
+    })
+  };
+
+  const results = loadLocalResults();
+  results.push(record);
+  saveLocalResults(results);
+  pushResultToRemote(record); // 리모트 시트 전송
+  
+  isCurrentResponseLogged = true;
+}
+
+function processAndShowResults() {
+  registerSurveyResponse();
+
+  // 메타 정보 표기
+  document.getElementById('result-user-meta').textContent = `${userDetails.name || '익명'} 식구 (${userDetails.generation || '기타'}, ${userDetails.age || '미정'}, ${userDetails.gender || '미정'})`;
+  
+  const now = new Date();
+  document.getElementById('result-date-display').textContent = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
+
+  const container = document.getElementById('capture-area');
+  container.innerHTML = '';
+
+  topics.forEach((t, i) => {
+    const { left, right } = calculateValues(t.value);
+    const leftPct = (left * 10).toFixed(1);
+    const rightPct = (right * 10).toFixed(1);
+
+    const card = document.createElement('div');
+    card.className = 'result-item-card';
+    card.innerHTML = `
+      <div class="result-card-header">주제 ${i + 1}. ${escapeHTML(t.title)}</div>
+      <div class="result-values-row">
+        <div class="result-label-box left">
+          <span class="lbl">${escapeHTML(t.leftLabel)}</span>
+          <span class="val">${left.toFixed(1)}</span>
+        </div>
+        <div class="result-label-box right">
+          <span class="lbl">${escapeHTML(t.rightLabel)}</span>
+          <span class="val">${right.toFixed(1)}</span>
+        </div>
+      </div>
+      <div class="ratio-bar-track">
+        <div class="ratio-bar-left-fill" style="width: ${leftPct}%"></div>
+        <div class="ratio-bar-right-fill" style="width: ${rightPct}%"></div>
+      </div>
+      <div class="stat-badge" id="topic-stat-badge-${t.id}">식구 평균 통계 산출 중...</div>
+    `;
+    container.appendChild(card);
+  });
+
+  // 비동기식 실시간 통계 계산
+  mergeAllResults(totalResults => {
+    topics.forEach(t => {
+      const badge = document.getElementById(`topic-stat-badge-${t.id}`);
+      if (!badge) return;
+
+      const rights = [];
+      totalResults.forEach(r => {
+        (r.answers || []).forEach(ans => {
+          if (ans.id === t.id) rights.push(ans.right);
+        });
+      });
+
+      const count = rights.length;
+      if (count === 0) {
+        badge.innerHTML = '누적된 식구 통계 데이터가 없습니다.';
+        return;
+      }
+
+      const avgRight = rights.reduce((a, b) => a + b, 0) / count;
+      const avgLeft = 10 - avgRight;
+
+      // 표준편차 산출
+      let std = 0;
+      if (count > 1) {
+        const variance = rights.reduce((a, x) => a + Math.pow(x - avgRight, 2), 0) / count;
+        std = Math.sqrt(variance);
+      }
+
+      badge.innerHTML = `전체 평균 — 좌측 ${avgLeft.toFixed(2)}점 / 우측 ${avgRight.toFixed(2)}점 · 표준편차 ${std.toFixed(2)} (${count}명 참여)`;
+    });
+  });
+
+  navigateToScreen('result-screen');
+}
+
+// 캡처 스크린샷 본연 기능 구현
+document.getElementById('btn-copy-screenshot').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-copy-screenshot');
+  if (typeof html2canvas === 'undefined') {
+    triggerToast('캡처 모듈 로드 실패 (네트워크를 확인하세요)');
+    return;
+  }
+
+  const prevText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '결과물 캡처 중...';
+
+  try {
+    const targetElement = document.getElementById('capture-root');
+    const canvas = await html2canvas(targetElement, {
+      scale: 2.2, // 선명도 고배율
+      backgroundColor: '#F4F7F6',
+      useCORS: true
+    });
+
+    let isClipboardSaved = false;
+    if (navigator.clipboard && window.ClipboardItem) {
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+          })
+        ]);
+        isClipboardSaved = true;
+      } catch (err) { /* 클립보드 권한 거부 시 파일 다운로드 대체 */ }
+    }
+
+    if (isClipboardSaved) {
+      triggerToast('결과가 클립보드에 복사되었습니다. 카카오톡에 붙여넣기 하세요!');
+    } else {
+      triggerAndDownloadPNG(canvas);
+      triggerToast('결과 이미지를 다운로드 폴더에 저장했습니다.');
+    }
+  } catch (e) {
+    triggerToast('캡처 이미지 생성 실패');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = prevText;
+  }
+});
+
+function triggerAndDownloadPNG(canvas) {
+  const link = document.createElement('a');
+  const d = new Date();
+  const dateStr = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  link.download = `신앙인사이드_결과_${dateStr}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+document.getElementById('btn-restart-game').addEventListener('click', () => {
+  clearIntroInputs();
+  navigateToScreen('intro-screen');
+});
+
+
+/* ══════════════════════════════════════════
+   4단계: 다른 식구 통계 표기
+══════════════════════════════════════════ */
+let cachedFullResults = [];
+
+function populateOthersScreen() {
+  const container = document.getElementById('others-content-container');
+  container.innerHTML = '<div class="no-data-alert">데이터 연동 중...</div>';
+  
+  mergeAllResults(list => {
+    cachedFullResults = list;
+    renderOthersTable(list);
+  });
+}
+
+function renderOthersTable(list) {
+  const container = document.getElementById('others-content-container');
+  if (!list || list.length === 0) {
+    container.innerHTML = '<div class="no-data-alert">등록된 식구 진단 결과가 아직 존재하지 않습니다.</div>';
+    return;
+  }
+
+  // 범례 생성
+  const columns = topics.map((t, idx) => ({ id: t.id, name: `주제 ${idx + 1}`, full: t.title, left: t.leftLabel, right: t.rightLabel }));
+  const legendHtml = columns.map(c => `<div><b>${c.name} (${escapeHTML(c.full)})</b>: <span style="color:var(--left-clr)">${escapeHTML(c.left)}</span> ↔ <span style="color:var(--right-clr)">${escapeHTML(c.right)}</span></div>`).join('');
+  
+  const headers = ['이름', '세대', '연령대', '성별', ...columns.map(c => `<th title="${escapeHTML(c.full)}">${c.name}</th>`)];
+  
+  // 데이터 로우
+  const rows = list.map(record => {
+    const ansMap = {};
+    (record.answers || []).forEach(a => { ansMap[a.id] = a.right; });
+    
+    return `<tr>
+      <td>${escapeHTML(record.name)}</td>
+      <td>${escapeHTML(record.generation || '-')}</td>
+      <td>${escapeHTML(record.age || '-')}</td>
+      <td>${escapeHTML(record.gender || '-')}</td>
+      ${columns.map(c => `<td>${ansMap[c.id] !== undefined ? ansMap[c.id].toFixed(1) : '-'}</td>`).join('')}
+    </tr>`;
+  }).join('');
+
+  // 평균 및 표준편차 통계
+  const calcAverage = (cid) => {
+    const arr = [];
+    list.forEach(r => {
+      (r.answers || []).forEach(ans => { if (ans.id === cid) arr.push(ans.right); });
+    });
+    if (arr.length === 0) return '-';
+    return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
+  };
+
+  const calcStdDev = (cid) => {
+    const arr = [];
+    list.forEach(r => {
+      (r.answers || []).forEach(ans => { if (ans.id === cid) arr.push(ans.right); });
+    });
+    if (arr.length <= 1) return '0.00';
+    const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+    const variance = arr.reduce((a, x) => a + Math.pow(x - avg, 2), 0) / arr.length;
+    return Math.sqrt(variance).toFixed(2);
+  };
+
+  const avgCells = columns.map(c => `<td>${calcAverage(c.id)}</td>`).join('');
+  const stdCells = columns.map(c => `<td>${calcStdDev(c.id)}</td>`).join('');
+
+  const tableHtml = `
+    <div class="others-legend-box">
+      ${legendHtml}
+      <div style="margin-top: 10px; font-weight:800; color:var(--primary);">* 표 내부 수치는 "우측 안건에 대한 친화도(10점 만점)"를 나타냅니다.</div>
+    </div>
+    <div class="table-responsive-wrap">
+      <table class="statistics-table">
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>세대</th>
+            <th>연령대</th>
+            <th>성별</th>
+            ${columns.map(c => `<th>${c.name}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+          <tr class="total-stat-row">
+            <td colspan="4">평균</td>
+            ${avgCells}
+          </tr>
+          <tr class="total-stat-row">
+            <td colspan="4">표준편차</td>
+            ${stdCells}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = tableHtml;
+  
+  const textSource = CURRENT_COLLECTOR_URL ? '서버 통합 통계' : '기기 로컬 스토리지';
+  document.getElementById('btn-show-others').nextElementSibling ? null : 
+    triggerCountIndicator(list.length, textSource);
+}
+
+function triggerCountIndicator(count, source) {
+  const check = document.getElementById('others-screen').querySelector('.total-count-label');
+  if (check) check.remove();
+  const div = document.createElement('div');
+  div.className = 'total-count-label';
+  div.textContent = `총 ${count}명 참여 · 데이터 출처: ${source}`;
+  document.getElementById('others-content-container').after(div);
+}
+
+// 엑셀 저장 구현
+document.getElementById('btn-export-csv').addEventListener('click', () => {
+  const records = cachedFullResults.length > 0 ? cachedFullResults : loadLocalResults();
+  if (records.length === 0) { triggerToast('내보낼 데이터가 없습니다.'); return; }
+
+  const targetCols = topics.map((t, idx) => ({ id: t.id, header: `주제${idx+1}(${t.rightLabel.substring(0,10)}...)` }));
+  const pad = n => String(n).padStart(2, '0');
+  const formatCell = s => {
+    s = String(s);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+
+  const csvRows = [];
+  csvRows.push(['이름', '세대', '연령대', '성별', '제출 날짜', ...targetCols.map(c => c.header)]);
+  
+  records.forEach(r => {
+    const ansMap = {};
+    (r.answers || []).forEach(a => { ansMap[a.id] = a.right; });
+    const d = new Date(r.date);
+    const dateStr = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    
+    csvRows.push([
+      r.name, 
+      r.generation || '-', 
+      r.age || '-', 
+      r.gender || '-', 
+      dateStr, 
+      ...targetCols.map(c => ansMap[c.id] !== undefined ? ansMap[c.id].toFixed(1) : '')
+    ]);
+  });
+
+  // 평균선 추가
+  csvRows.push([]);
+  const getColRights = (cid) => {
+    const arr = [];
+    records.forEach(r => {
+      (r.answers || []).forEach(ans => { if (ans.id === cid) arr.push(ans.right); });
+    });
+    return arr;
+  };
+  
+  csvRows.push([
+    '평균', '', '', '', '', 
+    ...targetCols.map(c => {
+      const list = getColRights(c.id);
+      return list.length ? (list.reduce((a,b)=>a+b, 0)/list.length).toFixed(2) : '';
+    })
+  ]);
+
+  const csvContent = '\uFEFF' + csvRows.map(row => row.map(formatCell).join(',')).join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const downloadUrl = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  const today = new Date();
+  link.download = `신앙인사이드_설문결과_${today.getFullYear()}${pad(today.getMonth()+1)}${pad(today.getDate())}.csv`;
+  link.click();
+  URL.revokeObjectURL(downloadUrl);
+});
+
+// 데이터 비우기
+document.getElementById('btn-clear-local-results').addEventListener('click', () => {
+  if (loadLocalResults().length === 0) { triggerToast('로컬에 저장된 데이터가 이미 없습니다.'); return; }
+  const confirmMsg = CURRENT_COLLECTOR_URL 
+    ? '이 기기(브라우저)에 캐싱된 데이터만 지워집니다.\n(구글 시트에 수집된 원본은 유지됩니다.)\n진행할까요?'
+    : '정말 모든 진단 데이터를 초기화할까요? 복구할 수 없습니다.';
+  if (confirm(confirmMsg)) {
+    saveLocalResults([]);
+    populateOthersScreen();
+    triggerToast('로컬 캐시 데이터를 성공적으로 비웠습니다.');
+  }
+});
+
+document.getElementById('btn-show-others').addEventListener('click', () => {
+  populateOthersScreen();
+  navigateToScreen('others-screen');
+});
+
+document.getElementById('btn-back-to-result').addEventListener('click', () => {
+  navigateToScreen('result-screen');
+});
+
+
+/* ══════════════════════════════════════════
+   5단계: 관리자(어드민) 설정 화면 제어
+══════════════════════════════════════════ */
+function renderAdminTopicsList() {
+  const listContainer = document.getElementById('admin-topics-edit-list');
+  listContainer.innerHTML = '';
+
+  topics.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'admin-item-card';
+    card.innerHTML = `
+      <div class="admin-item-header">
+        <div class="admin-item-badge">${i + 1}</div>
+        <span>주제 설정 #${i + 1}</span>
+        <div class="admin-sort-controls">
+          <button class="icon-btn" onclick="sortAdminItem(${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button class="icon-btn" onclick="sortAdminItem(${i}, 1)" ${i === topics.length - 1 ? 'disabled' : ''}>▼</button>
+          <button class="icon-btn delete-action" onclick="deleteAdminItem(${i})">✕</button>
+        </div>
+      </div>
+      <div class="admin-fields-group">
+        <div class="admin-field-row">
+          <label>대주제</label>
+          <input type="text" list="admin-title-preset" value="${escapeHTML(t.title)}" oninput="topics[${i}].title=this.value" placeholder="예: 구원관의 차이">
+        </div>
+        <div class="admin-field-row">
+          <label>좌측</label>
+          <input type="text" value="${escapeHTML(t.leftLabel)}" oninput="topics[${i}].leftLabel=this.value" placeholder="좌측 안건 텍스트">
+        </div>
+        <div class="admin-field-row">
+          <label>우측</label>
+          <input type="text" value="${escapeHTML(t.rightLabel)}" oninput="topics[${i}].rightLabel=this.value" placeholder="우측 안건 텍스트">
+        </div>
+        <div class="admin-img-preview-row">
+          <div class="admin-img-upload-box">
+            <span class="title">좌측 이미지</span>
+            <div class="admin-img-preview-container" onclick="uploadAdminImage(${i}, 'left')">
+              ${t.leftImage ? `<img src="${t.leftImage}" alt="">` : '📷'}
+            </div>
+          </div>
+          <div class="admin-img-upload-box">
+            <span class="title">우측 이미지</span>
+            <div class="admin-img-preview-container" onclick="uploadAdminImage(${i}, 'right')">
+              ${t.rightImage ? `<img src="${t.rightImage}" alt="">` : '📷'}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    listContainer.appendChild(card);
+  });
+}
+
+// 순서 이동 전용 전역 바인딩
+window.sortAdminItem = function(index, direction) {
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= topics.length) return;
+  [topics[index], topics[targetIndex]] = [topics[targetIndex], topics[index]];
+  renderAdminTopicsList();
+};
+
+// 삭제
+window.deleteAdminItem = function(index) {
+  if (topics.length <= 1) { triggerToast('최소한 1개 이상의 진단 항목이 존재해야 합니다.'); return; }
+  if (confirm(`주제 #${index+1}을 삭제하시겠습니까?`)) {
+    topics.splice(index, 1);
+    renderAdminTopicsList();
+  }
+};
+
+// 파일 업로드 base64 변환
+window.uploadAdminImage = function(index, side) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = ev => {
+      if (side === 'left') {
+        topics[index].leftImage = ev.target.result;
+      } else {
+        topics[index].rightImage = ev.target.result;
+      }
+      renderAdminTopicsList();
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+};
+
+// 대주제 추천 자동완성 데이터리스트 탑재
+(function injectDataList() {
+  const dl = document.createElement('datalist');
+  dl.id = 'admin-title-preset';
+  RECOMMEND_TITLES.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    dl.appendChild(opt);
+  });
+  document.body.appendChild(dl);
+})();
+
+// 어드민 진입 트리거 리스너
+let previousActiveScreen = 'intro-screen';
+document.getElementById('floating-admin-trigger').addEventListener('click', () => {
+  const currentActive = document.querySelector('.screen.active');
+  previousActiveScreen = currentActive ? currentActive.id : 'intro-screen';
+
+  document.getElementById('admin-api-url-input').value = CURRENT_COLLECTOR_URL;
+  renderAdminTopicsList();
+  navigateToScreen('admin-screen');
+});
+
+// 어드민 제어 버튼 리스너
+document.getElementById('btn-close-admin').addEventListener('click', () => {
+  navigateToScreen(previousActiveScreen);
+});
+
+document.getElementById('btn-admin-add-topic').addEventListener('click', () => {
+  const newId = 't_' + Date.now();
+  topics.push({
+    id: newId,
+    title: DEFAULT_MAIN_TITLE,
+    leftLabel: '새로운 좌측 선택지',
+    rightLabel: '새로운 우측 선택지',
+    leftImage: generateSVG('◀', '새주제 좌측', '#E6F3ED', '#0D5C3A'),
+    rightImage: generateSVG('▶', '새주제 우측', '#F5F5F5', '#718096'),
+    value: 50
+  });
+  renderAdminTopicsList();
+  
+  // 신규 추가 후 맨 하단 스크롤
+  setTimeout(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }, 100);
+});
+
+document.getElementById('btn-admin-save-all').addEventListener('click', () => {
+  saveTopicsData(topics);
+  
+  const rawUrl = document.getElementById('admin-api-url-input').value.trim();
+  CURRENT_COLLECTOR_URL = rawUrl || ''; // URL 갱신
+  
+  triggerToast('모든 설정 사항이 정상 저장되었습니다.');
+});
+
+document.getElementById('btn-admin-reset-default').addEventListener('click', () => {
+  if (confirm('모든 임의 편집 사항이 삭제되고 초기 기본 주제로 복구됩니다. 계속할까요?')) {
+    topics = getTopicsWithDefaults();
+    saveTopicsData(topics);
+    CURRENT_COLLECTOR_URL = DEFAULT_COLLECTOR_URL;
+    document.getElementById('admin-api-url-input').value = CURRENT_COLLECTOR_URL;
+    renderAdminTopicsList();
+    triggerToast('초기 상태로 초기화되었습니다.');
+  }
+});
+
+/* ══════════════════════════════════════════
+   실행 진입점
+══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initializeIntroScreen();
+  navigateToScreen('intro-screen');
+});
+</script>
+</body>
+</html>
