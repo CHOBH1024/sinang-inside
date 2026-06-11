@@ -3,6 +3,7 @@ import { SurveyConfig, AnswerData, UserInfo } from '../types';
 import { RadarChart3D } from './RadarChart3D';
 import { HrPdfReport } from './HrPdfReport';
 import { SnsExportButton } from './SnsExportButton';
+import { InstaShareCard } from './InstaShareCard';
 import { ArrowLeft, Link as LinkIcon, ChevronLeft, ChevronRight, RotateCcw, Settings, X, Share2, Sparkles } from 'lucide-react';
 import { themeMap } from '../theme';
 import { calculateScores } from '../utils/scoringEngine';
@@ -586,9 +587,16 @@ export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: 
               <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6" />
               <h3 className="text-white font-black text-lg mb-6 text-center">어떻게 공유할까요?</h3>
               
+              <div className="grid grid-cols-1 mb-4">
+                <InstaShareCard 
+                  personaName={resultData.persona}
+                  emoji={resultData.emoji}
+                  surveyTitle={survey.name}
+                  topTraits={radarData.slice(0, 3).map(r => ({ label: r.subject, value: r.A }))}
+                  color={cardTheme.from}
+                />
+              </div>
               <div className="grid grid-cols-3 gap-3 mb-6">
-                <SnsExportButton surveyName={survey.name} surveyColor={survey.color} resultData={resultData} compact />
-                <SnsExportButton surveyName={survey.name} surveyColor={survey.color} resultData={resultData} compact mode="download" />
                 <button onClick={() => { handleKakaoShare(); setIsShareOpen(false); }} className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 text-yellow-400 hover:bg-yellow-400/20 transition-all active:scale-95">
                   <span className="text-xl">💬</span>
                   <span className="text-[9px] font-bold">카카오톡</span>

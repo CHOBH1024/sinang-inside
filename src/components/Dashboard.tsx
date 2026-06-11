@@ -12,6 +12,7 @@ import { personaDirectoryData, PersonaListItem } from '../data/personaData';
 import { getHistory, SurveyHistoryRecord } from '../utils/historyStorage';
 import { DailyWordCard } from './DailyWordCard';
 import { FaithCalendar } from './FaithCalendar';
+import { UserLevelCard } from './UserLevelCard';
 
 interface DashboardProps {
   onSelectSurvey: (config: SurveyConfig) => void;
@@ -85,8 +86,11 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
       </header>
 
       {/* 전체 메인 레이아웃 */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 sm:space-y-24">
         
+        {/* ── 0. 신앙 레벨 카드 (게이미피케이션) ── */}
+        <UserLevelCard />
+
         {/* ── 1. Hero Section (전체 설명) ── */}
         <section className="text-center space-y-6 pt-8 pb-12 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-b from-[#0d5c3a]/20 via-transparent to-transparent p-6 sm:p-10 border border-[#0d5c3a]/10">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#0d5c3a]/10 rounded-full blur-[100px] pointer-events-none"></div>
