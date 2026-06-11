@@ -5,6 +5,7 @@ import { SurveyIntro } from './components/SurveyIntro';
 import { SurveyEngine } from './components/SurveyEngine';
 import { AnalyzingScreen } from './components/AnalyzingScreen';
 import { SurveyConfig, AnswerData } from './types';
+import { surveys } from './data/surveys';
 
 const SurveyResults = lazy(() => import('./components/SurveyResults').then(module => ({ default: module.SurveyResults })));
 const TeamSynergyDashboard = lazy(() => import('./components/TeamSynergyDashboard').then(module => ({ default: module.TeamSynergyDashboard })));
@@ -17,8 +18,8 @@ import { AdsensePassSection } from './components/AdsensePassSection';
 type AppState = 'dashboard' | 'intro' | 'engine' | 'analyzing' | 'results' | 'team' | 'admin' | 'columns';
 
 export default function App() {
-  const [appState, setAppState] = useState<AppState>('dashboard');
-  const [activeSurvey, setActiveSurvey] = useState<SurveyConfig | null>(null);
+  const [appState, setAppState] = useState<AppState>('intro');
+  const [activeSurvey, setActiveSurvey] = useState<SurveyConfig | null>(surveys[0]);
   const [modeLimit, setModeLimit] = useState<number>(30);
   const [answers, setAnswers] = useState<Record<number, AnswerData>>({});
 
@@ -85,9 +86,9 @@ export default function App() {
   };
 
   const handleHome = () => {
-    setActiveSurvey(null);
+    setActiveSurvey(surveys[0]);
     setAnswers({});
-    setAppState('dashboard');
+    setAppState('intro');
   };
 
   return (

@@ -34,18 +34,18 @@ const CARD_PATTERNS = [
 ];
 
 const VIRAL_PHRASES = [
-  (p: string) => `나 오늘 Mirror Insight 해봤는데 "${p}" 나왔어 ㅋㅋ 너무 소름 🤯 너도 해봐`,
-  (p: string) => `"${p}" 판정받고 팩폭 실화냐... 완전 내 얘기잖아 😭 mirrorinsight.kr`,
-  (p: string) => `친구야 나 "${p}" 유형이래 ㅋㅋㅋ 너는 뭐 나오는지 해봐 → mirrorinsight.kr`,
-  (p: string) => `MBTI는 이제 구식 🙅 Mirror Insight에서 "${p}" 받음 완전 신기 해봐요`,
+  (p: string) => `나 오늘 신앙인사이드 해봤는데 "${p}" 나왔어 🕊️ 내 신앙 성향 완전 정확함! 너도 해봐 👉 sinang-inside.vercel.app`,
+  (p: string) => `"${p}" 판정받고 내 신앙생활 다시 돌아보게 됨.. 완전 내 심정 얘기잖아 😭 sinang-inside.vercel.app`,
+  (p: string) => `친구야 나 신앙 성향 진단에서 "${p}" 유형이래! 너는 어떤 신앙 유형인지 해봐 → sinang-inside.vercel.app`,
+  (p: string) => `선문대/선학UP 연구 기반 신앙 성향 진단 해봄! 나는 "${p}" 나옴 완전 신기 🛐`,
 ];
 
 const CELEB_ARCHETYPES = [
-  { name: '유재석형 리더', emoji: '🎙️', desc: '모두를 웃기며 조율하는 완벽한 사회적 리더', keyword: ['사교', '관계', '리더'] },
-  { name: 'BTS RM형 사색가', emoji: '🎤', desc: '지성과 감성을 겸비한 철학적 크리에이터', keyword: ['창의', '지적', '예술'] },
-  { name: '손흥민형 집념가', emoji: '⚽', desc: '목표를 향해 묵묵히 달려가는 실력파', keyword: ['성취', '집중', '실행'] },
-  { name: '김연아형 완벽주의', emoji: '⛸️', desc: '디테일 하나 놓치지 않는 프로페셔널', keyword: ['완벽', '분석', '원칙'] },
-  { name: '아이유형 감성파', emoji: '🎵', desc: '깊은 공감능력으로 모두의 마음을 여는 예술가', keyword: ['공감', '감성', '소통'] },
+  { name: '아브라함형 (개척과 절대순종)', emoji: '🛐', desc: '하늘의 부름에 따라 본토 친척 아비 집을 떠난 개척자적 신앙', keyword: ['개척', '순종', '결단'] },
+  { name: '야곱형 (고난 극복과 탕감복귀)', emoji: '⚔️', desc: '21년의 노역과 얍복강 승리를 통해 탕감을 복귀한 인내의 신앙', keyword: ['인내', '승리', '탕감'] },
+  { name: '요셉형 (섭리적 통찰과 용서)', emoji: '🌾', desc: '고난 속에서도 하늘의 비전을 잃지 않고 형제를 용서한 지혜의 신앙', keyword: ['지혜', '비전', '용서'] },
+  { name: '모세형 (희생과 백성 인도)', emoji: '🦅', desc: '광야 40년 동안 이스라엘 백성을 이끈 희생적 민족 지도자 신앙', keyword: ['지도력', '희생', '헌신'] },
+  { name: '효정(孝情)형 (참사랑의 상속자)', emoji: '💜', desc: '하늘부모님과 참부모님의 심정을 온전히 상속받아 실천하는 심정 신앙', keyword: ['효정', '심정', '참사랑'] },
 ];
 
 const COMPAT_DESC: Record<string, string> = {
@@ -201,23 +201,23 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
 
   const handleCopyLink = () => {
     const mockHash = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const url = `https://mirrorinsight.kr/result/${mockHash}`;
+    const url = `https://sinang-inside.vercel.app/result/${mockHash}`;
     navigator.clipboard.writeText(url);
     showToast('✨ 링크가 복사되었습니다!');
   };
 
   const handleTwitterShare = () => {
-    const text = encodeURIComponent(`나는 "${resultData.persona}" 유형!\n"${resultData.headline}"\n\n당신은 어떤 유형인지 알아보세요 👇`);
-    const tags = encodeURIComponent('MirrorInsight,성향테스트,팩트폭행');
-    window.open(`https://twitter.com/intent/tweet?text=${text}&hashtags=${tags}&url=${encodeURIComponent('https://mirrorinsight.kr')}`, '_blank');
+    const text = encodeURIComponent(`나는 "${resultData.persona}" 유형!\n"${resultData.headline}"\n\n당신은 어떤 신앙 유형인지 알아보세요 👇`);
+    const tags = encodeURIComponent('신앙인사이드,신앙성향진단,심정스펙트럼');
+    window.open(`https://twitter.com/intent/tweet?text=${text}&hashtags=${tags}&url=${encodeURIComponent('https://sinang-inside.vercel.app')}`, '_blank');
   };
 
   const handleKakaoShare = () => {
     const phrase = VIRAL_PHRASES[phraseIdx](resultData.persona);
     if (navigator.share) {
-      navigator.share({ title: `Mirror Insight: ${resultData.persona}`, text: phrase, url: 'https://mirrorinsight.kr' });
+      navigator.share({ title: `신앙인사이드: ${resultData.persona}`, text: phrase, url: 'https://sinang-inside.vercel.app' });
     } else {
-      navigator.clipboard.writeText(phrase + '\nhttps://mirrorinsight.kr');
+      navigator.clipboard.writeText(phrase + '\nhttps://sinang-inside.vercel.app');
       showToast('💬 카카오톡 공유 문구가 복사되었습니다!');
     }
   };
@@ -227,7 +227,7 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
     showToast('📝 바이럴 문구가 복사되었습니다!');
   };
 
-  const resultUrl = `https://mirrorinsight.kr/result/${resultData.persona.replace(/\s/g, '_')}`;
+  const resultUrl = `https://sinang-inside.vercel.app/result/${resultData.persona.replace(/\s/g, '_')}`;
 
   const cardBg = cardDark
     ? `linear-gradient(145deg, rgba(0,0,0,0.75), rgba(0,0,0,0.6)), linear-gradient(135deg, ${cardTheme.from}18, ${cardTheme.to}18)`
@@ -359,7 +359,7 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
                 <QRCodeSVG value={resultUrl} size={64} bgColor="#ffffff" fgColor="#0f172a" level="M" />
               </div>
             )}
-            <p className={`text-[9px] font-black uppercase tracking-[0.4em] ${cardDark ? 'text-white/30' : 'text-black/30'}`}>Mirror Insight</p>
+            <p className={`text-[9px] font-black uppercase tracking-[0.4em] ${cardDark ? 'text-white/30' : 'text-black/30'}`}>Sinang Inside</p>
           </motion.div>
         </motion.div>
 
@@ -393,7 +393,7 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
 
         {/* ── Celeb Match ── */}
         <section className="rounded-[2.5rem] border border-white/10 p-6 bg-white/5 backdrop-blur-3xl shadow-xl">
-          <h2 className="text-white font-black text-sm mb-5">⭐ 당신이 셀럽이라면?</h2>
+          <h2 className="text-white font-black text-sm mb-5">⭐ 나의 신앙적 롤모델 인물</h2>
           <div className="space-y-3">
             {matchedCelebs.map((c, i) => (
               <motion.div key={i} whileHover={{ scale: 1.02 }} className="flex items-center gap-4 rounded-3xl p-4 border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">

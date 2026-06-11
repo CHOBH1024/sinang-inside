@@ -14,14 +14,14 @@ export const AnalyzingScreen = ({ color, onComplete }: AnalyzingScreenProps) => 
   const t = themeMap[color] || themeMap['blue'];
 
   const messages = [
-    "동공 지진 패턴 스캔 중...",
-    "숨겨진 무의식 도파민 추출 중...",
-    "팩트 폭행 데이터베이스 대조...",
-    "당신의 진짜 흑염룡 소환 중...",
-    "인스타 업로드용 카드 굽는 중..."
+    "신앙 실천 유형 분석 중...",
+    "말씀 체휼 강도 측정 중...",
+    "심정 스펙트럼 데이터 대조...",
+    "독생녀관 및 섭리 인식 연산 중...",
+    "맞춤형 신앙 매뉴얼 산출 중..."
   ];
 
-  const randomHashtags = ["#팩트폭행", "#MBTI과몰입", "#뼈때림", "#소름", "#내얘기", "#도파민", "#성향테스트", "#갓생", "#망생"];
+  const randomHashtags = ["#신앙인사이드", "#심정영성", "#말씀해석", "#독생녀관", "#구원섭리", "#실천자유", "#초종교연대", "#성향진단", "#신앙매뉴얼"];
 
   useEffect(() => {
     playSwooshSound();

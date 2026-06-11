@@ -6,6 +6,7 @@ export const theme = {
 };
 
 export const themeMap: Record<string, { bgBg: string, text: string, bg: string, border: string }> = {
+  '#0d5c3a': { bgBg: 'bg-[#0d5c3a]/10', text: 'text-[#0d5c3a]', bg: 'bg-[#0d5c3a]', border: 'border-[#0d5c3a]/20' },
   blue: { bgBg: 'bg-blue-500/10', text: 'text-blue-400', bg: 'bg-blue-500', border: 'border-blue-500/20' },
   amber: { bgBg: 'bg-amber-500/10', text: 'text-amber-400', bg: 'bg-amber-500', border: 'border-amber-500/20' },
   teal: { bgBg: 'bg-teal-500/10', text: 'text-teal-400', bg: 'bg-teal-500', border: 'border-teal-500/20' },

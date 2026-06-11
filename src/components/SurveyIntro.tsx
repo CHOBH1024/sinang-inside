@@ -42,13 +42,6 @@ export const SurveyIntro = ({ survey, onBack, onStart }: SurveyIntroProps) => {
       >
         <div className={`absolute inset-0 ${t.bgBg} opacity-10`} />
         
-        <button
-          onClick={() => { triggerHaptic(10); onBack(); }}
-          className="relative z-10 flex items-center gap-1.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mb-8 text-xs font-bold uppercase tracking-wider transition-colors active:scale-95"
-        >
-          <ArrowLeft size={16} /> Back
-        </button>
-
         <div className="relative z-10">
           <motion.span 
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
@@ -78,31 +71,17 @@ export const SurveyIntro = ({ survey, onBack, onStart }: SurveyIntroProps) => {
           className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/50 dark:border-slate-800 rounded-[2rem] p-3 shadow-2xl"
         >
           <div className="space-y-2">
-            {[
-              { m: 30, t: '30 문항', d: '핵심 성향 파악 · 약 3분' },
-              { m: 70, t: '70 문항', d: '심층 가치관 분석 · 약 7분' }
-            ].map(b => (
-              <motion.button
-                key={b.m} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(b.m)}
-                className="w-full flex items-center justify-between px-5 py-4 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-black transition-colors border border-slate-200/50 dark:border-slate-800"
-              >
-                <div className="text-left">
-                  <p className="text-slate-900 dark:text-white font-black text-sm">{b.t}</p>
-                  <p className="text-slate-400 text-[11px] font-bold mt-0.5">{b.d}</p>
-                </div>
-                <ChevronRight size={16} className="text-slate-300" />
-              </motion.button>
-            ))}
             <motion.button
-              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(120)}
-              className="w-full relative overflow-hidden flex items-center justify-between px-5 py-4 rounded-[1.5rem] bg-slate-900 dark:bg-white transition-colors"
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(12)}
+              className="w-full relative overflow-hidden flex items-center justify-between px-6 py-5 rounded-[1.5rem] bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white transition-all shadow-lg hover:shadow-[#0d5c3a]/20 cursor-pointer"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 dark:via-black/5 to-transparent -translate-x-[100%] hover:translate-x-[100%] transition-transform duration-1000" />
               <div className="text-left relative z-10">
-                <p className="text-white dark:text-black font-black text-sm flex items-center gap-1.5">120 문항 <span className="text-[10px] bg-amber-400 text-amber-900 px-2 py-0.5 rounded-full">PRO</span></p>
-                <p className="text-white/60 dark:text-black/60 text-[11px] font-bold mt-0.5">최고 해상도 정밀 진단 · 약 12분</p>
+                <p className="text-white font-black text-lg flex items-center gap-2">
+                  진단 시작하기 <span className="text-xs bg-[#b8860b] text-white px-2.5 py-0.5 rounded-full font-bold">12문항</span>
+                </p>
+                <p className="text-white/80 text-[11px] font-bold mt-1">학술적 신앙 성향 및 심정 스펙트럼 분석 · 약 2분 소요</p>
               </div>
-              <ChevronRight size={16} className="text-white/40 dark:text-black/40 relative z-10" />
+              <ChevronRight size={20} className="text-white/80 relative z-10" />
             </motion.button>
           </div>
         </motion.div>
@@ -113,7 +92,7 @@ export const SurveyIntro = ({ survey, onBack, onStart }: SurveyIntroProps) => {
         <div className="flex-1 px-6 py-12 relative z-0">
           <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-10 pb-5 border-b border-slate-200 dark:border-slate-800">
             <span className="flex items-center gap-1.5"><Clock size={12} /> {post.readTime}</span>
-            <span className="flex items-center gap-1.5"><BookOpen size={12} /> Mirror Insight Column</span>
+            <span className="flex items-center gap-1.5"><BookOpen size={12} /> 신앙인사이드 학술 칼럼</span>
           </div>
 
           <div className="space-y-16">

@@ -39,7 +39,7 @@ export const SnsExportButton = ({ surveyName, surveyColor, resultData, compact =
       canvas.toBlob(async (blob) => {
         if (!blob) throw new Error('Blob generation failed');
         
-        const file = new File([blob], `MirrorInsight_${surveyName.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+        const file = new File([blob], `SinangInside_${surveyName.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
         
         // direct download 모드이거나, share가 불가능한 환경일 경우 다운로드 처리
         if (mode === 'download' || !navigator.share || !navigator.canShare || !navigator.canShare({ files: [file] })) {
@@ -55,8 +55,8 @@ export const SnsExportButton = ({ surveyName, surveyColor, resultData, compact =
           // 공유 모드
           try {
             await navigator.share({
-              title: '나의 Mirror Insight 결과',
-              text: `나는 "${resultData.persona}" 유형! 당신도 해봐요 👉 mirrorinsight.kr`,
+              title: '나의 신앙인사이드 결과',
+              text: `나는 "${resultData.persona}" 유형! 당신도 해봐요 👉 sinang-inside.vercel.app`,
               files: [file]
             });
           } catch (shareError) {
@@ -135,7 +135,7 @@ export const SnsExportButton = ({ surveyName, surveyColor, resultData, compact =
           <div className="z-10 w-full flex flex-col items-center h-full justify-between">
             <div className="text-center w-full">
               <span className={`px-6 py-2 rounded-full ${t.bgBg} ${t.text} text-2xl font-bold tracking-widest uppercase mb-12 inline-block border ${t.border}`}>
-                MIRROR INSIGHT : {surveyName}
+                SINANG INSIDE : {surveyName}
               </span>
             </div>
             <div className="text-center mb-16">
@@ -152,8 +152,8 @@ export const SnsExportButton = ({ surveyName, surveyColor, resultData, compact =
               </ul>
             </div>
             <div className="w-full flex justify-between items-center px-4">
-              <div className="text-slate-400 text-2xl font-bold">@MirrorInsight</div>
-              <div className="text-slate-400 text-2xl">mirrorinsight.kr</div>
+              <div className="text-slate-400 text-2xl font-bold">@SinangInside</div>
+              <div className="text-slate-400 text-2xl">sinang-inside.vercel.app</div>
             </div>
           </div>
         </div>
