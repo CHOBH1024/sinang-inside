@@ -20,7 +20,7 @@ type AppState = 'dashboard' | 'intro' | 'engine' | 'analyzing' | 'results' | 'te
 export default function App() {
   const [appState, setAppState] = useState<AppState>('intro');
   const [activeSurvey, setActiveSurvey] = useState<SurveyConfig | null>(surveys[0]);
-  const [modeLimit, setModeLimit] = useState<number>(30);
+  const [modeLimit, setModeLimit] = useState<number>(12);
   const [answers, setAnswers] = useState<Record<number, AnswerData>>({});
 
   // URL 쿼리 파라미터 (?persona=...) 감지 및 결과 페이지 즉시 라우팅

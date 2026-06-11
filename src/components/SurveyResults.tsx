@@ -363,6 +363,87 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
           </motion.div>
         </motion.div>
 
+        {/* ── 6대 신앙 스펙트럼 상세 지표 ── */}
+        <section className="rounded-[2.5rem] border border-white/10 p-6 bg-white/5 backdrop-blur-3xl shadow-xl space-y-6">
+          <div>
+            <h2 className="text-white font-black text-sm mb-1">📊 6대 신앙 스펙트럼 지표</h2>
+            <p className="text-white/55 text-[10px] font-bold">전통적/수직적(0%)에서 현대적/수평적(100%) 방향의 내면 밸런스</p>
+          </div>
+
+          <div className="space-y-5">
+            {[
+              {
+                name: "심정영성 (Heart & Spirituality)",
+                leftText: "수직적 심정/개인 기도",
+                rightText: "수평적 참사랑/공동체 실천",
+                desc: "하늘부모님과의 수직적 기도와 개인적 영성을 중시하는지, 혹은 이웃과 사회를 향한 수평적 나눔과 실천을 본질로 보는지에 대한 지표입니다."
+              },
+              {
+                name: "말씀해석 (Word Interpretation)",
+                leftText: "원리 자구수호/경전주의",
+                rightText: "시대 맥락수용/유연한 계시",
+                desc: "원리강론과 참아버님 말씀선집의 역사적 텍스트를 철저히 보존하려 하는지, 혹은 시대 변화에 맞춰 창의적이고 유연하게 해석하려 하는지에 대한 지표입니다."
+              },
+              {
+                name: "독생녀관 (Only Begotten Daughter Theology)",
+                leftText: "동반자/참가정 중심",
+                rightText: "독자적 권능/참어머니 중심",
+                desc: "참어머니의 위상을 참아버님과 섭리를 이루는 완성적 동반자로 보는지, 혹은 독자적인 권능을 지닌 여성 메시아(독생녀) 위상으로 받드는지에 대한 지표입니다."
+              },
+              {
+                name: "구원섭리 (Providential Salvation)",
+                leftText: "5% 인간책임/탕감조건",
+                rightText: "천일국 안착/은사·은혜",
+                desc: "개인의 개성완성과 희생적인 탕감조건 수행을 중시하는지, 혹은 참부모님이 승리해주신 축복과 은혜 중심의 축제 신앙을 지향하는지에 대한 지표입니다."
+              },
+              {
+                name: "실천자유 (Action & Liberty)",
+                leftText: "지시순응/절대복종",
+                rightText: "자유의지/자율적 실천",
+                desc: "교단의 예식과 공직자의 지시에 무조건적으로 순응하려는 성향인지, 혹은 개인의 양심과 상황에 따른 창의적인 자율성을 선호하는지에 대한 지표입니다."
+              },
+              {
+                name: "초종교연대 (Interreligious Solidarity)",
+                leftText: "교단 구별짓기/전도 중심",
+                rightText: "초종교 평화/보편적 소통",
+                desc: "교단 고유의 신앙 정체성을 수호하여 전도(개종)에 전념하는지, 혹은 기독교 및 사회 일반과의 적극적인 소통과 보편적인 초종교 연대를 중시하는지에 대한 지표입니다."
+              }
+            ].map((cat, idx) => {
+              const score = Math.round(scores.categoryScores[idx] || 0);
+              return (
+                <div key={idx} className="space-y-2 border-b border-white/5 pb-4 last:border-b-0 last:pb-0">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-white font-black">{cat.name}</span>
+                    <span className="font-bold text-amber-400 text-sm">{score}%</span>
+                  </div>
+                  {/* Progress bar */}
+                  <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 relative">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#b8860b] to-[#0d5c3a] rounded-full transition-all duration-1000"
+                      style={{ width: `${score}%` }}
+                    />
+                    {/* Visual center marker */}
+                    <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-white/20" />
+                  </div>
+                  {/* Left-Right descriptors */}
+                  <div className="flex justify-between text-[9px] font-bold text-white/40">
+                    <span>{cat.leftText}</span>
+                    <span>{cat.rightText}</span>
+                  </div>
+                  {/* Category detailed interpretation based on score */}
+                  <p className="text-[11px] text-white/60 leading-relaxed word-keep bg-black/20 p-2.5 rounded-xl border border-white/5">
+                    {cat.desc} <span className="text-white/80 font-bold">
+                      {score >= 60 ? `(현재 성향은 [${cat.rightText}]에 더 치우쳐 있습니다.)` :
+                       score <= 40 ? `(현재 성향은 [${cat.leftText}]에 더 가까운 무게중심을 둡니다.)` :
+                       `(현재 두 가치 사이에서 중용과 균형을 유지하고 있습니다.)`}
+                    </span>
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
         {/* ── Swipeable Strengths/Weaknesses ── */}
         <section className="rounded-[2.5rem] border border-white/10 p-6 bg-white/5 backdrop-blur-3xl shadow-xl">
           <div className="flex justify-between items-center mb-5">
