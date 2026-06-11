@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SurveyConfig, AnswerData } from '../types';
+import { SurveyConfig, AnswerData, UserInfo } from '../types';
 import { RadarChart3D } from './RadarChart3D';
+import { HrPdfReport } from './HrPdfReport';
 import { SnsExportButton } from './SnsExportButton';
 import { ArrowLeft, Link as LinkIcon, ChevronLeft, ChevronRight, RotateCcw, Settings, X, Share2, Sparkles } from 'lucide-react';
 import { themeMap } from '../theme';
@@ -9,6 +10,7 @@ import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useSwipeable } from 'react-swipeable';
 import confetti from 'canvas-confetti';
+import { saveHistory } from '../utils/historyStorage';
 
 // ============================================================
 // 데이터 상수 (21 기능용)
@@ -60,11 +62,12 @@ const COMPAT_DESC: Record<string, string> = {
 interface SurveyResultsProps {
   survey: SurveyConfig;
   answers: Record<number, AnswerData>;
+  userInfo: UserInfo | null;
   onRestart: () => void;
   onHome: () => void;
 }
 
-export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResultsProps) => {
+export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: SurveyResultsProps) => {
   const scores = calculateScores(survey, answers);
   const resultData = survey.getResultContent(scores.averageScore, scores.categoryScores, answers);
   const t = themeMap[survey.color] || themeMap['blue'];
@@ -164,6 +167,18 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
     };
     setTimeout(cycle, 300);
   }, []);
+
+  useEffect(() => {
+    if (revealPhase === 2) {
+      saveHistory({
+        surveyId: survey.id,
+        surveyTitle: survey.title,
+        personaName: resultData.persona,
+        emoji: resultData.emoji,
+        userInfo: userInfo || undefined,
+      });
+    }
+  }, [revealPhase, survey, resultData, userInfo]);
 
   const latencies = Object.values(answers).map(a => a.latencyMs || 0);
   const avgLatency = latencies.reduce((a, b) => a + b, 0) / (latencies.length || 1);
@@ -536,7 +551,15 @@ export const SurveyResults = ({ survey, answers, onRestart, onHome }: SurveyResu
       </div>
 
       {/* ── Floating Share Button (Apple Fluid style) ── */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-[400px] z-40">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-[400px] z-40 flex flex-col gap-3">
+        {userInfo && (
+          <HrPdfReport 
+            survey={survey}
+            answers={answers}
+            userInfo={userInfo}
+            resultData={resultData}
+          />
+        )}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.95 }}

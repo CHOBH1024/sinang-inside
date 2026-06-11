@@ -1,131 +1,202 @@
-import { useState } from 'react';
-import { ShieldCheck, Mic, ScanFace, Compass, Users, Headphones, Sparkles, Coffee, Star, Brain, MessageCircle, Crown, Zap, Shield, TrendingUp, Briefcase, Heart, Eye, CheckCircle, ChevronRight, FileText, BarChart3, Search } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { 
+  ShieldCheck, Clock, Compass, Users, Sparkles, Star, Brain, 
+  Crown, Zap, Shield, Heart, CheckCircle, ChevronRight, 
+  FileText, BarChart3, Search, BookOpen, X, Info 
+} from 'lucide-react';
 import { SurveyConfig } from '../types';
 import { surveys } from '../data/surveys';
-import { seoBio, seoPosts, diagnosticDeepDives, mirrorIntros } from '../data/seoContent';
+import { seoBio, mirrorIntros } from '../data/seoContent';
 import { motion, AnimatePresence } from 'motion/react';
+import { personaDirectoryData, PersonaListItem } from '../data/personaData';
+import { getHistory, SurveyHistoryRecord } from '../utils/historyStorage';
+import { DailyWordCard } from './DailyWordCard';
+import { FaithCalendar } from './FaithCalendar';
 
 interface DashboardProps {
   onSelectSurvey: (config: SurveyConfig) => void;
-  onNavigate?: (route: 'team' | 'admin' | 'columns') => void;
+  onNavigate?: (route: 'team' | 'admin' | 'columns' | 'balanceGame' | 'matcher' | 'journal') => void;
 }
 
-import { personaDirectoryData } from '../data/personaData';
-
 const tabKeywords: Record<string, string[]> = {
-  'thinking': ['#논리적추론', '#데이터해석', '#인지편향탐지', '#구조화사고', '#가설검증', '#리스크관리'],
-  'interaction': ['#사회적공감', '#비언어적소통', '#전략적네트워킹', '#갈등해소', '#정서적에너지', '#설득과영향력'],
-  'leadership': ['#비전수립', '#권한위임', '#심리적안전감', '#위기돌파', '#팀워크빌딩', '#조직문화'],
-  'achievement': ['#목표지향', '#자원최적화', '#회복탄력성', '#우선순위설정', '#실행프로세스', '#품질관리'],
-  'stability': ['#스트레스내성', '#평정심유지', '#실패수용력', '#정서적안정', '#객관성확보', '#에너지복구'],
-  'growth': ['#학습민첩성', '#자기주도적', '#유연한사고', '#언러닝', '#신기술적응', '#패러다임전환'],
-  'competency': ['#직무전문성', '#업무숙련도', '#신뢰구축', '#윤리적판단', '#지식전파', '#조직헌신도'],
-  'passion': ['#내적동기', '#소명의식', '#몰입상태', '#가치관일치', '#번아웃방어', '#소속감'],
-  'vision': ['#거시적트렌드', '#패턴인식', '#시나리오설계', '#창의적융합', '#장기전략', '#미래예측'],
+  'survey-spirituality': ['#수직영성', '#심정공명', '#기도정성', '#참사랑실천', '#공동체나눔'],
+  'survey-word': ['#원리보존', '#경전훈독', '#시대적해석', '#삶의말씀화', '#창의적소통'],
+  'survey-theology': ['#참아버님정통', '#성혼섭리관', '#독생녀신학', '#천일국안착', '#효정정신'],
+  'survey-salvation': ['#5퍼센트책임', '#탕감조건', '#혈통전환', '#안착의은사', '#해원상생'],
+  'survey-freedom': ['#절대신앙', '#귀일정신', '#양심의자유', '#자유의지', '#창의적실천'],
+  'survey-peace': ['#교단정체성', '#원리전도', '#초종교연대', '#평화대사', '#보편적인류애'],
+  'survey-family': ['#삼대권완성', '#순결축복', '#가정교회', '#공적사명', '#제물생애'],
 };
 
 export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
-  const [activeTab, setActiveTab] = useState<string>('thinking');
+  const [activeTab, setActiveTab] = useState<string>('survey-spirituality');
+  const [selectedPersona, setSelectedPersona] = useState<PersonaListItem | null>(null);
+  const [history, setHistory] = useState<SurveyHistoryRecord[]>([]);
+  const directoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setHistory(getHistory());
+  }, []);
 
   const triggerHaptic = (pattern: number | number[]) => {
     if (navigator.vibrate) navigator.vibrate(pattern);
   };
 
-  const handleSelectSurvey = (id: string, mode: 'standard' | 'master' | 'column') => {
+  const handleSelectSurvey = (id: string) => {
     triggerHaptic(20);
     const survey = surveys.find(s => s.id === id);
-    if (survey && mode !== 'column') {
+    if (survey) {
       onSelectSurvey(survey);
-    } else {
-      if (onNavigate) onNavigate('columns');
+    }
+  };
+
+  const handleBrowsePersona = (id: string) => {
+    triggerHaptic(15);
+    setActiveTab(id);
+    if (directoryRef.current) {
+      directoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   return (
-    <div className="bg-slate-50 min-h-[100dvh] pb-20 font-sans text-slate-900 selection:bg-blue-200">
+    <div className="bg-[#0b130f] min-h-[100dvh] pb-20 font-sans text-slate-100 selection:bg-[#b8860b] selection:text-white">
       
       {/* ── 상단 네비게이션 ── */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200 px-6 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center text-sm font-bold text-slate-600">
-          <span className="text-slate-900 flex items-center gap-1.5 text-base">
-            144 Persona Directory <CheckCircle size={16} className="text-blue-500" />
+      <header className="sticky top-0 z-40 bg-[#0d5c3a]/80 backdrop-blur-xl border-b border-[#b8860b]/20 px-6 py-4 shadow-lg shadow-black/20">
+        <div className="max-w-7xl mx-auto flex justify-between items-center text-sm font-bold">
+          <span className="text-white flex items-center gap-2 text-base md:text-lg tracking-wider font-extrabold uppercase">
+            <span className="text-[#b8860b] text-xl">🛐</span> 신앙인사이드 <span className="text-xs bg-[#b8860b]/20 text-[#b8860b] px-2 py-0.5 rounded border border-[#b8860b]/40 font-mono">SINANG INSIDE</span>
           </span>
-          <div className="flex gap-6">
-            <a href="#about" className="hover:text-blue-600 transition-colors">About</a>
-            <a href="#contact" className="hover:text-blue-600 transition-colors">Contact</a>
+          <div className="flex gap-3 sm:gap-6 text-[#b8860b] hover:text-[#fbbf24] transition-colors">
+            <button 
+              onClick={() => onNavigate && onNavigate('journal')}
+              className="hover:underline flex items-center gap-1 text-sm font-bold"
+            >
+              ✍️ 묵상 일지
+            </button>
+            <button 
+              onClick={() => onNavigate && onNavigate('columns')}
+              className="hover:underline flex items-center gap-1 text-sm font-bold"
+            >
+              <BookOpen size={16} /> 신학 칼럼
+            </button>
           </div>
         </div>
       </header>
 
-      {/* PC에서는 max-w-7xl로 확장, 모바일에서는 적절한 패딩 */}
+      {/* 전체 메인 레이아웃 */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
         
         {/* ── 1. Hero Section (전체 설명) ── */}
-        <section className="text-center space-y-6 pt-8 pb-12">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-slate-900 flex flex-col md:flex-row items-center justify-center gap-4">
-            <span className="text-6xl md:text-8xl">🪞</span> Mirror Inside
-          </h1>
-          <p className="text-slate-600 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto word-keep font-medium">
-            {seoBio}
-          </p>
+        <section className="text-center space-y-6 pt-8 pb-12 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-b from-[#0d5c3a]/20 via-transparent to-transparent p-6 sm:p-10 border border-[#0d5c3a]/10">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#0d5c3a]/10 rounded-full blur-[100px] pointer-events-none"></div>
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-4"
+          >
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white flex flex-col items-center justify-center gap-2">
+              <span className="text-[#b8860b] text-3xl font-bold tracking-[0.2em] uppercase mb-2">Theological Diagnostics</span>
+              <span>신앙 성향 진단 허브</span>
+            </h1>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-3xl mx-auto word-keep font-medium pt-2">
+              {seoBio}
+            </p>
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="pt-4"
+            >
+              <button
+                onClick={() => onNavigate && onNavigate('balanceGame')}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#b8860b] to-[#fbbf24] text-[#0b130f] hover:brightness-110 active:scale-95 transition-all font-black text-sm sm:text-base rounded-2xl shadow-lg shadow-[#b8860b]/20 cursor-pointer"
+              >
+                ⚖️ 신앙 밸런스 게임 30선 시작하기
+              </button>
+            </motion.div>
+          </motion.div>
         </section>
 
-        {/* ── 2. 9 Mirrors Grid (진단 도구 창) ── */}
+        {/* ── 1.5. 오늘의 훈독 말씀 카드 ── */}
+        <DailyWordCard compact />
+
+        {/* ── 2. 7 Diagnostics Grid (진단 도구 창) ── */}
         <section className="space-y-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-900 inline-block relative">
-              9 Dimensions of Career DNA
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-500 rounded-full"></div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white inline-block relative tracking-wide">
+              7대 독립적 신앙 진단 도구
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-16 h-1 bg-[#b8860b] rounded-full"></div>
             </h2>
           </div>
           
-          {/* PC에서는 3열, 태블릿 2열, 모바일 1열 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {mirrorIntros.map((mirror) => (
-              <article key={mirror.id} className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
-                <div className="flex flex-col items-center text-center mb-6">
-                  <span className="text-5xl bg-slate-50 p-4 rounded-3xl mb-4 shadow-inner">{mirror.emoji}</span>
-                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">{mirror.title}</h2>
+            <button 
+              onClick={() => onNavigate?.('matcher')}
+              className="bg-[#111e17] rounded-3xl p-6 md:p-8 shadow-xl border border-[#0d5c3a]/20 hover:border-[#b8860b]/40 transition-colors flex items-center justify-between group cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[#b8860b]/20 text-[#b8860b] rounded-xl flex items-center justify-center">
+                  <Heart size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">페르소나 궁합 분석</h3>
+                  <p className="text-sm text-slate-400">식구 간 섭리적 시너지 매칭</p>
+                </div>
+              </div>
+              <ChevronRight className="text-[#b8860b] group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            {mirrorIntros.map((mirror, index) => (
+              <article 
+                key={mirror.id} 
+                className="bg-[#111e17] rounded-3xl p-6 sm:p-8 shadow-xl border border-[#0d5c3a]/30 hover:border-[#b8860b]/50 hover:shadow-[#0d5c3a]/10 transition-all duration-300 flex flex-col h-full group"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="text-4xl bg-[#0d5c3a]/20 p-3.5 rounded-2xl border border-[#0d5c3a]/30 shadow-inner group-hover:scale-110 transition-transform">{mirror.emoji}</span>
+                  <div className="text-left">
+                    <span className="text-[10px] text-[#b8860b] font-bold tracking-widest uppercase">Survey 0{index + 1}</span>
+                    <h3 className="text-xl font-bold text-white tracking-tight leading-snug">{mirror.title.split(' (')[0]}</h3>
+                  </div>
                 </div>
 
-                <div className="bg-slate-50 rounded-2xl p-5 mb-8 border border-slate-100 flex-grow">
-                  <ul className="space-y-4 text-[13px] text-slate-600 list-none font-medium">
-                    {mirror.shortDesc?.map((desc, idx) => (
-                      <li key={idx} className="flex gap-2 items-start">
-                        <span className="word-keep leading-relaxed">{desc}</span>
+                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 flex-grow word-keep text-left">
+                  {mirror.desc}
+                </p>
+
+                <div className="bg-[#0b130f] rounded-2xl p-4 mb-6 border border-[#0d5c3a]/20 text-left">
+                  <p className="text-[11px] text-[#b8860b] font-bold mb-2.5 flex items-center gap-1.5"><Info size={12} /> 주요 측정 카테고리</p>
+                  <ul className="grid grid-cols-2 gap-2 text-[11px] text-slate-300 font-medium list-none">
+                    {mirror.bullets?.slice(0, 4).map((bullet, idx) => (
+                      <li key={idx} className="flex items-center gap-1.5 truncate">
+                        <span className="text-[#b8860b] text-xs">·</span>
+                        <span>{bullet.split(' 및 ')[0].split(' 지수')[0]}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-2 mb-8">
+                <div className="flex flex-wrap gap-1.5 mb-6">
                   {mirror.tags.map(tag => (
-                    <span key={tag} className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100">
+                    <span key={tag} className="text-[10px] font-bold text-[#b8860b] bg-[#b8860b]/10 px-2.5 py-1 rounded-full border border-[#b8860b]/20">
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <button 
-                    onClick={() => handleSelectSurvey(mirror.id, 'standard')}
-                    className="bg-slate-900 text-white font-bold py-3.5 px-2 rounded-xl text-sm flex flex-col items-center justify-center gap-1 hover:bg-slate-800 transition-colors shadow-md shadow-slate-900/10"
+                    onClick={() => handleSelectSurvey(mirror.id)}
+                    className="bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:brightness-110 transition-all shadow-md active:scale-95 cursor-pointer"
                   >
-                    <span className="flex items-center gap-1.5">Standard <FileText size={16} /></span>
-                    <span className="text-[10px] text-slate-300">30문항</span>
+                    진단 시작 <Zap size={14} />
                   </button>
                   <button 
-                    onClick={() => handleSelectSurvey(mirror.id, 'master')}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 px-2 rounded-xl text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all hover:-translate-y-0.5"
+                    onClick={() => handleBrowsePersona(mirror.id)}
+                    className="bg-[#111e17] text-[#b8860b] font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-[#b8860b]/30 hover:bg-[#b8860b]/10 transition-colors cursor-pointer"
                   >
-                    <span className="flex items-center gap-1.5">Master <Sparkles size={16} /></span>
-                    <span className="text-[10px] text-blue-100">70문항</span>
-                  </button>
-                  <button 
-                    onClick={() => handleSelectSurvey(mirror.id, 'column')}
-                    className="col-span-2 bg-white text-slate-700 font-bold py-3.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors"
-                  >
-                    지식 칼럼 읽기 <BarChart3 size={18} />
+                    유형 칼럼 <BookOpen size={14} />
                   </button>
                 </div>
               </article>
@@ -133,34 +204,37 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
           </div>
         </section>
 
-        {/* ── 3. Persona Directory 탭 (신규 기능) ── */}
-        <section className="bg-white rounded-3xl p-6 lg:p-10 shadow-sm border border-slate-200">
+        {/* ── 3. 63 Persona Directory 탭 ── */}
+        <section ref={directoryRef} className="bg-[#111e17] rounded-[2.5rem] p-6 lg:p-10 shadow-xl border border-[#0d5c3a]/20 scroll-mt-24">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-slate-900 mb-4">144 Persona Directory</h2>
-            <p className="text-slate-500">각 진단 도구별로 도출되는 144가지 페르소나 전체를 미리 확인해보세요.</p>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4">63 Persona Directory</h2>
+            <p className="text-slate-400 text-sm">7가지 진단 도구별로 도출되는 63가지 신앙 성향 페르소나와 삶의 지침 칼럼을 탐색해보세요.</p>
           </div>
           
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            {/* 탭 네비게이션 (PC: 세로, 모바일: 가로 스크롤) */}
-            <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 pb-4 lg:pb-0 hide-scrollbar lg:w-64 shrink-0">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
+            {/* 탭 네비게이션 (모바일: 가로 스크롤, PC: 세로) */}
+            <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 pb-4 lg:pb-0 hide-scrollbar lg:w-60 shrink-0 border-b lg:border-b-0 lg:border-r border-[#0d5c3a]/25 pr-0 lg:pr-6">
               {mirrorIntros.map((mirror) => (
                 <button
                   key={mirror.id}
-                  onClick={() => setActiveTab(mirror.id)}
-                  className={`flex items-center gap-3 px-5 py-4 rounded-2xl text-left whitespace-nowrap lg:whitespace-normal font-bold transition-all ${
+                  onClick={() => {
+                    triggerHaptic(10);
+                    setActiveTab(mirror.id);
+                  }}
+                  className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-left whitespace-nowrap lg:whitespace-normal font-bold transition-all text-xs sm:text-sm cursor-pointer ${
                     activeTab === mirror.id 
-                      ? 'bg-slate-900 text-white shadow-md' 
-                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-[#0d5c3a] text-white shadow-md border border-[#b8860b]/40' 
+                      : 'bg-[#0b130f] text-slate-400 hover:bg-[#0d5c3a]/10 hover:text-white border border-[#0d5c3a]/10'
                   }`}
                 >
-                  <span className="text-xl">{mirror.emoji}</span>
-                  <span>{mirror.title.split(' ')[0]}</span>
+                  <span className="text-lg">{mirror.emoji}</span>
+                  <span>{mirror.title.split(' (')[0]}</span>
                 </button>
               ))}
             </div>
 
             {/* 탭 콘텐츠 영역 */}
-            <div className="flex-1 min-h-[400px]">
+            <div className="flex-grow min-h-[400px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
@@ -170,13 +244,13 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col gap-6"
                 >
-                  <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 mb-2">
-                    <p className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
-                      <Sparkles size={16} /> 이 거울이 진단하는 핵심 키워드
+                  <div className="bg-[#0b130f] border border-[#0d5c3a]/30 rounded-2xl p-5 text-left">
+                    <p className="text-xs font-bold text-[#b8860b] mb-3.5 flex items-center gap-1.5">
+                      <Sparkles size={14} /> 이 영역의 주요 신앙 키워드
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {tabKeywords[activeTab]?.map((kw, i) => (
-                        <span key={i} className="text-xs font-bold text-blue-600 bg-white border border-blue-200 px-3 py-1.5 rounded-lg shadow-sm">
+                        <span key={i} className="text-[11px] font-bold text-slate-300 bg-[#0d5c3a]/20 border border-[#0d5c3a]/40 px-3 py-1.5 rounded-lg shadow-sm">
                           {kw}
                         </span>
                       ))}
@@ -185,15 +259,37 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {personaDirectoryData[activeTab]?.map((persona, idx) => (
-                      <div key={idx} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer">
-                        <h3 className="text-lg font-black text-slate-900 mb-2">{persona.name}</h3>
-                        <p className="text-slate-600 text-sm mb-4 word-keep leading-relaxed min-h-[40px]">{persona.desc}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {persona.tags.map(tag => (
-                            <span key={tag} className="text-[11px] font-bold text-slate-500 bg-white px-2 py-1 rounded-md border border-slate-200">
-                              {tag}
-                            </span>
-                          ))}
+                      <div 
+                        key={idx} 
+                        onClick={() => {
+                          triggerHaptic(15);
+                          setSelectedPersona(persona);
+                        }}
+                        className="bg-[#0b130f] border border-[#0d5c3a]/20 rounded-2xl p-5 hover:border-[#b8860b]/50 hover:shadow-lg hover:shadow-[#0d5c3a]/5 transition-all cursor-pointer text-left group flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-base font-bold text-white group-hover:text-[#b8860b] transition-colors flex items-center gap-2">
+                              <span>{persona.emoji}</span>
+                              <span>{persona.name}</span>
+                            </h4>
+                            <span className="text-[10px] text-slate-500 font-mono">Level {idx + 1}</span>
+                          </div>
+                          <p className="text-slate-400 text-xs sm:text-sm line-clamp-3 mb-4 leading-relaxed word-keep">
+                            {persona.desc}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#0d5c3a]/10">
+                          <div className="flex flex-wrap gap-1.5">
+                            {persona.tags.slice(0, 2).map(tag => (
+                              <span key={tag} className="text-[10px] font-bold text-slate-400">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-[11px] font-bold text-[#b8860b] flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
+                            칼럼 읽기 <ChevronRight size={12} />
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -205,58 +301,72 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
         </section>
 
         {/* ── 4. 나의 최근 진단 기록 ── */}
-        <section className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl">🕒</div>
+        <section className="bg-[#111e17] rounded-3xl p-6 sm:p-8 shadow-xl border border-[#0d5c3a]/20 flex flex-col md:flex-row items-center justify-between gap-6 text-left">
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="w-14 h-14 bg-[#0d5c3a]/20 border border-[#0d5c3a]/30 rounded-2xl flex items-center justify-center text-3xl">🕒</div>
             <div>
-              <h2 className="text-xl font-black text-slate-900 mb-1">나의 최근 진단 기록</h2>
-              <p className="text-slate-500 text-sm">과거의 진단 결과를 다시 확인하고 비교해보세요.</p>
+              <h3 className="text-lg font-bold text-white mb-1">최근 진단 기록</h3>
+              <p className="text-slate-400 text-xs sm:text-sm">단말기에 저장된 최근의 신앙 진단 결과를 확인하세요.</p>
             </div>
           </div>
-          <button className="w-full md:w-auto bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl p-4 flex items-center justify-between md:min-w-[300px] transition-colors group">
-            <div className="flex items-center gap-4 text-left">
-              <span className="text-3xl">💡</span>
-              <div>
-                <p className="text-xs font-bold text-blue-500 mb-0.5">기존 진단 완료</p>
-                <p className="font-black text-slate-900">직관적 통찰 해결사</p>
-                <p className="text-xs text-slate-400 mt-1">사용자 | 2026. 5. 13.</p>
+          <div className="w-full flex gap-3 overflow-x-auto pb-2 hide-scrollbar snap-x">
+            {history.length > 0 ? (
+              history.map((record) => (
+                <div 
+                  key={record.id}
+                  className="bg-[#0b130f] border border-[#0d5c3a]/30 rounded-2xl p-4 flex items-center justify-between min-w-[260px] max-w-[320px] shrink-0 snap-start"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{record.emoji}</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-[#b8860b] mb-0.5">{record.surveyTitle}</p>
+                      <p className="font-bold text-white text-sm truncate max-w-[150px]">{record.personaName}</p>
+                      <p className="text-[10px] text-slate-500 mt-1">{new Date(record.timestamp).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bg-[#0b130f] border border-[#0d5c3a]/30 rounded-2xl p-4 flex items-center justify-center min-w-[260px] text-slate-500 text-sm italic">
+                아직 진단 기록이 없습니다.
               </div>
-            </div>
-            <ChevronRight className="text-slate-400 group-hover:text-slate-900 transition-colors" />
-          </button>
+            )}
+          </div>
         </section>
 
-        {/* ── 5. The Science Behind Mirror Insight (애드센스 통과 및 신뢰도 확보용 학술 섹션) ── */}
-        <section className="space-y-8 pb-10">
-          <div className="bg-slate-900 text-white rounded-3xl p-10 md:p-16 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2"></div>
+        {/* ── 4.5. 신앙 정성 히트맵 ── */}
+        <FaithCalendar />
+
+        {/* ── 5. The Science Behind Sinang Inside (AdSense 학술 세팅) ── */}
+        <section className="pb-10">
+          <div className="bg-[#111e17] text-white rounded-3xl p-8 sm:p-12 shadow-xl border border-[#0d5c3a]/20 relative overflow-hidden text-left">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#0d5c3a]/15 rounded-full blur-[120px] pointer-events-none"></div>
             
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-black mb-4 md:text-center tracking-tight">
-                The Science Behind Mirror Insight
+            <div className="relative z-10 space-y-6">
+              <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight text-center">
+                The Science Behind Sinang Inside
               </h2>
-              <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto word-keep">
-                Mirror Insight는 단순한 심리 테스트가 아닙니다. 현대 심계측학(Psychometrics)과 데이터 사이언스를 결합하여, 당신의 숨겨진 커리어 DNA를 가장 과학적인 방식으로 도출합니다.
+              <p className="text-slate-400 text-xs sm:text-sm text-center max-w-3xl mx-auto word-keep leading-relaxed pb-6">
+                본 진단은 세계평화통일가정연합의 참부모신학과 통일사상을 기반으로 선문대학교 및 선학UP대학원대학교의 학술 논문 분석 기법을 현대 종교사회학의 심계측학(Psychometrics) 프레임워크에 융합하여 정밀하게 성찰하도록 설계되었습니다.
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-left">
-                <div className="space-y-3">
-                  <h3 className="font-bold text-xl flex items-center gap-2 text-blue-300">🧬 Big Five Factor Model</h3>
-                  <p className="text-slate-300 text-sm leading-relaxed word-keep">
-                    현대 심리학에서 가장 신뢰받는 5요인 성격 모형(Big Five)을 베이스로, 직무 환경에 특화된 문항 알고리즘을 설계했습니다. 외향성, 신경증, 개방성, 친화성, 성실성의 다차원적인 스펙트럼을 통해 당신의 업무 퍼포먼스 예측력을 극대화합니다.
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pt-4">
+                <div className="space-y-2.5">
+                  <h4 className="font-bold text-base flex items-center gap-2 text-[#b8860b]"><Crown size={16} /> 심정 신학적 6축 척도</h4>
+                  <p className="text-slate-400 text-xs leading-relaxed word-keep">
+                    개인의 심정 상태를 경전 훈독, 심정 공명, 탕감 조건, 독생녀 섭리관, 자율 양심, 초종교 평화 연대 등 6대 영역으로 계측합니다. 이를 통해 지엽적인 종교 행위를 넘어 근본적인 영성 궤도를 투사합니다.
                   </p>
                 </div>
-                <div className="space-y-3">
-                  <h3 className="font-bold text-xl flex items-center gap-2 text-indigo-300">🧠 Jungian Cognitive Functions</h3>
-                  <p className="text-slate-300 text-sm leading-relaxed word-keep">
-                    칼 융(Carl Jung)의 인지 기능 이론을 현대 비즈니스 프레임워크로 재해석했습니다. 당신이 정보를 수집(Perceiving)하고 의사를 결정(Judging)하는 근본적인 뇌의 패턴을 추적하여, 가장 시너지가 높은 업무 환경을 매칭합니다.
+                <div className="space-y-2.5">
+                  <h4 className="font-bold text-base flex items-center gap-2 text-[#b8860b]"><Brain size={16} /> 베이지안 일관성 필터</h4>
+                  <p className="text-slate-400 text-xs leading-relaxed word-keep">
+                    응답자가 기계적으로 답변하거나 사회적으로 좋아 보이는 가치를 임의 선택하는 왜곡 편향을 감지하기 위해 교차 질문 로직을 탑재했습니다. 답변 일관성에 기반해 63개의 성향 중 가장 적합한 페르소나를 매핑합니다.
                   </p>
                 </div>
-                <div className="space-y-3">
-                  <h3 className="font-bold text-xl flex items-center gap-2 text-purple-300">⚡ Latency Consistency Engine</h3>
-                  <p className="text-slate-300 text-sm leading-relaxed word-keep">
-                    베이지안 추론(Bayesian Inference) 알고리즘을 적용한 응답 반응 속도(Latency) 추적 엔진이 탑재되어 있습니다. 유저가 무의식적으로 선택하는 패턴의 일관성을 밀리초(ms) 단위로 교차 검증하여, 자기 보고식 설문의 치명적 한계인 '사회적 바람직성 편향'을 완벽에 가깝게 필터링합니다.
+                <div className="space-y-2.5">
+                  <h4 className="font-bold text-base flex items-center gap-2 text-[#b8860b]"><ShieldCheck size={16} /> 목회 행정적 혁신 피드백</h4>
+                  <p className="text-slate-400 text-xs leading-relaxed word-keep">
+                    진단 결과로 제공되는 강점, 약점, 성화 조언, 협력 가이드는 인사 개혁과 신앙 성장을 목표로 30년 이상의 목회 리더십 및 행정 경험이 축적된 실질적 피드백 시스템입니다.
                   </p>
                 </div>
               </div>
@@ -265,19 +375,122 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
         </section>
 
         {/* ── 8. 푸터 ── */}
-        <footer className="pt-16 pb-8 text-center border-t border-slate-200">
-          <nav className="flex flex-wrap justify-center gap-6 text-sm font-bold text-slate-500 mb-6">
-            <a href="#about" className="hover:text-slate-900 transition-colors">About Us</a>
-            <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
-            <a href="#privacy" className="hover:text-slate-900 transition-colors">Privacy Policy</a>
-            <a href="#terms" className="hover:text-slate-900 transition-colors">Terms of Service</a>
-          </nav>
-          <p className="text-xs text-slate-400">
-            © 2026 Mirror Insight System. All rights reserved.
+        <footer className="pt-16 pb-8 text-center border-t border-[#0d5c3a]/20">
+          <p className="text-xs text-slate-500 leading-relaxed max-w-xl mx-auto pb-4 word-keep">
+            본 사이트의 모든 진단 분석 및 유형 칼럼은 참부모신학과 통일사상 연구의 대중적 성찰을 돕기 위한 보조 도구입니다. 개인의 삶을 참사랑의 지상 천국으로 복귀하고자 하는 모든 축복 식구들의 영성을 수호합니다.
+          </p>
+          <p className="text-[10px] text-slate-600">
+            © 2026 Sinang Inside System. All rights reserved.
           </p>
         </footer>
 
       </main>
+
+      {/* ── 9. Persona Detail Modal ── */}
+      <AnimatePresence>
+        {selectedPersona && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* 배경 흐림 */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedPersona(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            
+            {/* 모달 박스 */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+              className="relative w-full max-w-2xl bg-[#111e17] rounded-3xl border border-[#b8860b]/40 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col z-10"
+            >
+              {/* 상단 띠와 헤더 */}
+              <div className="bg-gradient-to-r from-[#0d5c3a] to-[#0b130f] p-6 border-b border-[#b8860b]/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">{selectedPersona.emoji}</span>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{selectedPersona.name}</h3>
+                    <div className="flex gap-2 mt-1">
+                      {selectedPersona.tags.map(tag => (
+                        <span key={tag} className="text-[10px] font-bold text-[#b8860b] bg-[#b8860b]/10 px-2 py-0.5 rounded border border-[#b8860b]/20">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setSelectedPersona(null)}
+                  className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* 스크롤 가능한 본문 */}
+              <div className="p-6 overflow-y-auto space-y-6 text-left text-slate-200">
+                <div className="bg-[#0b130f] p-4 rounded-xl border border-[#0d5c3a]/20">
+                  <p className="text-xs font-bold text-[#b8860b] mb-1">한줄 정의</p>
+                  <p className="font-bold text-white text-sm tracking-wide leading-relaxed word-keep">"{selectedPersona.headline}"</p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-[#b8860b]">심층 분석 및 성화 칼럼 (500자 이상)</p>
+                  <p className="text-xs sm:text-sm leading-relaxed text-slate-300 whitespace-pre-wrap word-keep">{selectedPersona.desc}</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-[#0b130f]/60 p-4 rounded-xl border border-[#0d5c3a]/10">
+                    <p className="text-xs font-bold text-emerald-400 mb-2 flex items-center gap-1">✔ 핵심 강점</p>
+                    <ul className="space-y-1.5 list-none pl-0 text-xs text-slate-300">
+                      {selectedPersona.strengths?.map((str, i) => (
+                        <li key={i} className="flex gap-1.5 items-start">
+                          <span className="text-emerald-400">·</span>
+                          <span className="leading-snug">{str}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="bg-[#0b130f]/60 p-4 rounded-xl border border-[#0d5c3a]/10">
+                    <p className="text-xs font-bold text-rose-400 mb-2 flex items-center gap-1">⚠ 취약한 한계점</p>
+                    <ul className="space-y-1.5 list-none pl-0 text-xs text-slate-300">
+                      {selectedPersona.weaknesses?.map((weak, i) => (
+                        <li key={i} className="flex gap-1.5 items-start">
+                          <span className="text-rose-400">·</span>
+                          <span className="leading-snug">{weak}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-[#b8860b]/10 p-5 rounded-2xl border border-[#b8860b]/30">
+                  <p className="text-xs font-bold text-[#b8860b] mb-2 flex items-center gap-1.5">
+                    💡 삶을 바꿀 영성 조언 (목회 행정 가이드)
+                  </p>
+                  <p className="text-xs sm:text-sm leading-relaxed text-[#fcd34d] font-medium word-keep">
+                    {selectedPersona.advice}
+                  </p>
+                </div>
+              </div>
+
+              {/* 하단 단추 */}
+              <div className="bg-[#0b130f] p-4 border-t border-[#0d5c3a]/20 flex justify-end">
+                <button 
+                  onClick={() => setSelectedPersona(null)}
+                  className="bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white font-bold px-6 py-2.5 rounded-xl text-xs hover:brightness-110 transition-all cursor-pointer shadow-md"
+                >
+                  닫기
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      
     </div>
   );
 };

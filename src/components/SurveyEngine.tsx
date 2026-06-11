@@ -5,6 +5,7 @@ import { SurveyConfig, AnswerData } from '../types';
 import { themeMap } from '../theme';
 import { playPopSound } from '../utils/audioEngine';
 import { ArrowLeft } from 'lucide-react';
+import { TermifiedText } from './TermifiedText';
 
 interface SurveyEngineProps {
   survey: SurveyConfig;
@@ -196,7 +197,7 @@ export const SurveyEngine = ({ survey, modeLimit, onComplete }: SurveyEngineProp
                 transition={{ delay: 0.15 }}
                 className="text-3xl md:text-4xl font-black text-white leading-snug mb-12 word-keep drop-shadow-lg"
               >
-                {question.q}
+                <TermifiedText text={question.q} />
               </motion.h2>
               
               {isDilemma ? (

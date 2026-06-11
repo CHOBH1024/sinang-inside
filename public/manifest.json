@@ -1,0 +1,28 @@
+{
+  "name": "신앙인사이드",
+  "short_name": "신앙인사이드",
+  "description": "가정연합 공식 신앙 성향 및 심정 스펙트럼 진단 시스템",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b130f",
+  "theme_color": "#0d5c3a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%230d5c3a' rx='40'/><text y='140' x='96' font-size='120' text-anchor='middle'>🛐</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%230d5c3a' rx='80'/><text y='380' x='256' font-size='320' text-anchor='middle'>🛐</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["education", "lifestyle", "spirituality"],
+  "lang": "ko",
+  "dir": "ltr",
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

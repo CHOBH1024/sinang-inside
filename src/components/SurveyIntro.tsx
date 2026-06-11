@@ -35,10 +35,18 @@ export const SurveyIntro = ({ survey, onBack, onStart }: SurveyIntroProps) => {
 
   return (
     <article ref={containerRef} className="min-h-[100dvh] bg-slate-50 dark:bg-[#0a0a0c] flex flex-col relative">
+      {/* Floating Back Button */}
+      <button 
+        onClick={onBack}
+        className="absolute top-4 left-4 z-30 p-2.5 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full text-white transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center border border-white/10"
+      >
+        <ArrowLeft size={18} />
+      </button>
+
       {/* ── Apple-style Parallax Hero Header ── */}
       <motion.header 
         style={{ y: headerY, opacity: headerOpacity }}
-        className="relative overflow-hidden pt-16 pb-12 px-6 bg-white dark:bg-black rounded-b-[3rem] shadow-sm z-10"
+        className="relative overflow-hidden pt-20 pb-12 px-6 bg-white dark:bg-black rounded-b-[3rem] shadow-sm z-10"
       >
         <div className={`absolute inset-0 ${t.bgBg} opacity-10`} />
         
@@ -72,14 +80,14 @@ export const SurveyIntro = ({ survey, onBack, onStart }: SurveyIntroProps) => {
         >
           <div className="space-y-2">
             <motion.button
-              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(12)}
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(survey.questions.length)}
               className="w-full relative overflow-hidden flex items-center justify-between px-6 py-5 rounded-[1.5rem] bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white transition-all shadow-lg hover:shadow-[#0d5c3a]/20 cursor-pointer"
             >
               <div className="text-left relative z-10">
                 <p className="text-white font-black text-lg flex items-center gap-2">
-                  진단 시작하기 <span className="text-xs bg-[#b8860b] text-white px-2.5 py-0.5 rounded-full font-bold">12문항</span>
+                  진단 시작하기 <span className="text-xs bg-[#b8860b] text-white px-2.5 py-0.5 rounded-full font-bold">{survey.questions.length}문항</span>
                 </p>
-                <p className="text-white/80 text-[11px] font-bold mt-1">학술적 신앙 성향 및 심정 스펙트럼 분석 · 약 2분 소요</p>
+                <p className="text-white/80 text-[11px] font-bold mt-1">학술적 신앙 성향 및 심정 스펙트럼 분석 · 약 1분 소요</p>
               </div>
               <ChevronRight size={20} className="text-white/80 relative z-10" />
             </motion.button>

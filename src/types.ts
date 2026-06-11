@@ -1,3 +1,10 @@
+export interface UserInfo {
+  name: string;
+  region: string; // 교구 또는 소속
+  position: string; // 직책 (예: 목회자, 공직자, 축복가정 등)
+  generation?: string; // 축복 기수 (선택)
+}
+
 export interface SurveyQuestion {
   c: number; // Category index (1-6)
   t: 'L' | 'R' | 'V'; // Question type
@@ -86,4 +93,18 @@ export interface BlogSection {
   emoji: string;
   body: string;
   highlight?: string; // pull-quote
+}
+
+export interface BalanceOption {
+  text: string;
+  type: 'V' | 'H' | 'T' | 'M'; // V=Vertical (수직), H=Horizontal (수평), T=Traditional (전통), M=Modern (현대)
+  desc: string;
+}
+
+export interface BalanceQuestion {
+  id: number;
+  question: string;
+  emoji: string;
+  options: BalanceOption[];
+  reflection: string;
 }

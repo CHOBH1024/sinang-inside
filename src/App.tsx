@@ -4,24 +4,29 @@ import { Dashboard } from './components/Dashboard';
 import { SurveyIntro } from './components/SurveyIntro';
 import { SurveyEngine } from './components/SurveyEngine';
 import { AnalyzingScreen } from './components/AnalyzingScreen';
-import { SurveyConfig, AnswerData } from './types';
+import { SurveyConfig, AnswerData, UserInfo } from './types';
 import { surveys } from './data/surveys';
 
 const SurveyResults = lazy(() => import('./components/SurveyResults').then(module => ({ default: module.SurveyResults })));
 const TeamSynergyDashboard = lazy(() => import('./components/TeamSynergyDashboard').then(module => ({ default: module.TeamSynergyDashboard })));
 const AdminPanel = lazy(() => import('./components/AdminPanel').then(module => ({ default: module.AdminPanel })));
 const ColumnLounge = lazy(() => import('./components/ColumnLounge').then(module => ({ default: module.ColumnLounge })));
+const BalanceGame = lazy(() => import('./components/BalanceGame').then(module => ({ default: module.BalanceGame })));
+const PersonaMatcher = lazy(() => import('./components/PersonaMatcher').then(module => ({ default: module.PersonaMatcher })));
+const HRIntakeForm = lazy(() => import('./components/HRIntakeForm').then(module => ({ default: module.HRIntakeForm })));
+const FaithJournal = lazy(() => import('./components/FaithJournal').then(module => ({ default: module.FaithJournal })));
 
 import { AdsensePassSection } from './components/AdsensePassSection';
 
 // Simple state machine for routing
-type AppState = 'dashboard' | 'intro' | 'engine' | 'analyzing' | 'results' | 'team' | 'admin' | 'columns';
+type AppState = 'dashboard' | 'intro' | 'hr-intake' | 'engine' | 'analyzing' | 'results' | 'team' | 'admin' | 'columns' | 'balanceGame' | 'matcher' | 'journal';
 
 export default function App() {
-  const [appState, setAppState] = useState<AppState>('intro');
+  const [appState, setAppState] = useState<AppState>('dashboard');
   const [activeSurvey, setActiveSurvey] = useState<SurveyConfig | null>(surveys[0]);
   const [modeLimit, setModeLimit] = useState<number>(12);
   const [answers, setAnswers] = useState<Record<number, AnswerData>>({});
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   // URL 쿼리 파라미터 (?persona=...) 감지 및 결과 페이지 즉시 라우팅
   useEffect(() => {
@@ -66,12 +71,18 @@ export default function App() {
   }, []);
 
   const handleSelectSurvey = (config: SurveyConfig) => {
-    setActiveSurvey(config);
+    setAnswers({});
+    setUserInfo(null);
     setAppState('intro');
   };
 
   const handleStartSurvey = (limit: number) => {
     setModeLimit(limit);
+    setAppState('hr-intake');
+  };
+
+  const handleIntakeSubmit = (info: UserInfo) => {
+    setUserInfo(info);
     setAppState('engine');
   };
 
@@ -88,7 +99,7 @@ export default function App() {
   const handleHome = () => {
     setActiveSurvey(surveys[0]);
     setAnswers({});
-    setAppState('intro');
+    setAppState('dashboard');
   };
 
   return (
@@ -108,12 +119,22 @@ export default function App() {
         {appState === 'team' && <TeamSynergyDashboard onBack={handleHome} />}
         {appState === 'admin' && <AdminPanel onBack={handleHome} />}
         {appState === 'columns' && <ColumnLounge onBack={handleHome} />}
+        {appState === 'balanceGame' && <BalanceGame onBack={handleHome} />}
+        {appState === 'matcher' && <PersonaMatcher onBack={handleHome} />}
+        {appState === 'journal' && <FaithJournal onBack={handleHome} />}
         
         {appState === 'intro' && activeSurvey && (
           <SurveyIntro 
             survey={activeSurvey} 
             onBack={handleHome} 
             onStart={handleStartSurvey} 
+          />
+        )}
+
+        {appState === 'hr-intake' && (
+          <HRIntakeForm 
+            onBack={() => setAppState('intro')}
+            onSubmit={handleIntakeSubmit}
           />
         )}
         
@@ -133,6 +154,7 @@ export default function App() {
           <SurveyResults 
             survey={activeSurvey} 
             answers={answers} 
+            userInfo={userInfo}
             onRestart={handleRestart} 
             onHome={handleHome} 
           />
