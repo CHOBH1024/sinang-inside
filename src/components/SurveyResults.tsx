@@ -12,6 +12,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useSwipeable } from 'react-swipeable';
 import confetti from 'canvas-confetti';
 import { saveHistory } from '../utils/historyStorage';
+import { recommendChallenge, startChallenge, getActiveChallenge } from '../data/challenges';
 
 // ============================================================
 // 데이터 상수 (21 기능용)
@@ -71,6 +72,13 @@ interface SurveyResultsProps {
 export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: SurveyResultsProps) => {
   const scores = calculateScores(survey, answers);
   const resultData = survey.getResultContent(scores.averageScore, scores.categoryScores, answers);
+  const recommendedChallenge = recommendChallenge(survey.id);
+
+  const handlePrescribeChallenge = () => {
+    triggerHaptic([30, 50, 30]);
+    if (!getActiveChallenge()) startChallenge(recommendedChallenge.id);
+    onHome();
+  };
   const t = themeMap[survey.color] || themeMap['blue'];
   const radarData = survey.categories.map((catName, index) => ({
     subject: catName,
@@ -379,6 +387,41 @@ export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: 
           </motion.div>
         </motion.div>
 
+        {/* ── 🎯 맞춤 신앙 챌린지 처방 (그래서 오늘 뭐하지?) ── */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="rounded-[2.5rem] border border-[#b8860b]/40 p-6 sm:p-7 bg-gradient-to-br from-[#0d5c3a]/40 via-white/5 to-[#b8860b]/10 backdrop-blur-3xl shadow-xl relative overflow-hidden"
+        >
+          <div className="absolute -top-16 -right-16 w-48 h-48 bg-[#b8860b]/15 rounded-full blur-[70px] pointer-events-none" />
+          <div className="relative z-10">
+            <p className="text-[10px] font-black text-[#fcd34d] tracking-widest uppercase mb-1">Your Next Step · 맞춤 처방</p>
+            <h2 className="text-white font-black text-lg mb-2">그래서, 오늘부터 무엇을 실천할까요?</h2>
+            <p className="text-white/70 text-xs leading-relaxed word-keep mb-5">
+              당신의 성향에 꼭 맞는 <span className="text-[#fcd34d] font-bold">{recommendedChallenge.duration}일 여정</span>을 준비했어요.
+              하루 한 걸음씩, 진단으로 끝내지 말고 <span className="text-white font-bold">스스로 실천하는 신앙</span>으로 나아가요.
+            </p>
+
+            <div className="bg-black/30 border border-white/10 rounded-2xl p-4 mb-5 flex items-center gap-4">
+              <span className="text-4xl shrink-0">{recommendedChallenge.emoji}</span>
+              <div>
+                <h3 className="text-white font-bold text-base">{recommendedChallenge.title}</h3>
+                <p className="text-[#b8860b] text-[10px] font-bold mb-1">#{recommendedChallenge.axis} · {recommendedChallenge.duration}일</p>
+                <p className="text-white/60 text-xs leading-relaxed word-keep">{recommendedChallenge.summary}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handlePrescribeChallenge}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#b8860b] to-[#d4a017] text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer"
+            >
+              이 챌린지로 오늘 첫 걸음 떼기 <ChevronRight size={16} />
+            </button>
+            <p className="text-white/40 text-[10px] text-center mt-2.5">홈 화면의 ‘오늘의 신앙 실천’에서 매일 이어집니다 🔥</p>
+          </div>
+        </motion.section>
+
         {/* ── 6대 신앙 스펙트럼 상세 지표 ── */}
         <section className="rounded-[2.5rem] border border-white/10 p-6 bg-white/5 backdrop-blur-3xl shadow-xl space-y-6">
           <div>
@@ -459,6 +502,97 @@ export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: 
             })}
           </div>
         </section>
+
+        {/* ── 학술 연구자 버전: 심층 분석 블록 ── */}
+        {Object.keys(answers).some(k => parseInt(k) >= 6) && (() => {
+          const aq = [6,7,8,9,10,11].map(i => answers[i]?.value ?? 3);
+          const allportScore  = Math.round(((aq[0] + aq[1]) / 2) / 5 * 100);
+          const jungScore     = Math.round(((aq[2]) / 5) * 100);
+          const roerScore     = Math.round(((aq[3]) / 5) * 100);
+          const maslowLevel   = aq[4] <= 1 ? 1 : aq[4] <= 2 ? 2 : aq[4] <= 3 ? 3 : aq[4] <= 4 ? 4 : 5;
+          const maslowLabels  = ['생존적 신앙','소속 신앙','인정 신앙','자아실현 신앙','초월 신앙'];
+          const maslowEmojis  = ['🌱','🤝','🏅','🌟','✨'];
+          const gardnerScore  = Math.round((aq[5] / 5) * 100);
+
+          const indicators = [
+            { label: '올포트 내재적 종교성', score: allportScore, desc: allportScore >= 60 ? '신앙이 삶의 목적 자체인 내재형' : allportScore >= 40 ? '내재·외재 동기 균형' : '외재적 동기 우세', color: 'from-emerald-500 to-teal-500', emoji: '🎯' },
+            { label: '융 신앙 그림자 인식', score: jungScore, desc: jungScore >= 60 ? '그림자를 용감하게 직면' : jungScore >= 40 ? '부분적 인식' : '그림자 회피 경향', color: 'from-violet-500 to-purple-500', emoji: '🌑' },
+            { label: '로어 후반전 영성', score: roerScore, desc: roerScore >= 60 ? '신비·놓아버림의 후반전 영성' : roerScore >= 40 ? '전환기 영성' : '규칙·의무의 전반전 영성', color: 'from-amber-500 to-orange-500', emoji: '🌅' },
+            { label: '가드너 다중지능 신앙', score: gardnerScore, desc: gardnerScore >= 60 ? '다양한 방식으로 신앙 표현' : gardnerScore >= 40 ? '혼합형 신앙 표현' : '언어·교리 중심 신앙 표현', color: 'from-sky-500 to-blue-500', emoji: '🎨' },
+          ];
+
+          return (
+            <section className="rounded-[2.5rem] border border-violet-500/20 p-6 bg-violet-500/5 backdrop-blur-3xl shadow-xl">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-2xl">🔬</span>
+                <div>
+                  <h2 className="text-white font-black text-sm">학술 연구자 심층 분석</h2>
+                  <p className="text-white/40 text-[10px] mt-0.5">올포트 · 프랭클 · 융 · 매슬로 · 로어 · 가드너 지표</p>
+                </div>
+                <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2.5 py-1 rounded-full font-bold">ACADEMIC</span>
+              </div>
+
+              {/* 매슬로 신앙 욕구 단계 */}
+              <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/10">
+                <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-3">매슬로 신앙 욕구 단계</p>
+                <div className="flex items-center gap-1.5 mb-2">
+                  {[1,2,3,4,5].map(i => (
+                    <div key={i} className={`flex-1 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-all ${i <= maslowLevel ? 'bg-gradient-to-b from-amber-400 to-orange-500 text-white shadow-lg' : 'bg-white/5 text-white/20'}`}>
+                      {maslowEmojis[i-1]}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-white font-black text-sm text-center mt-2">
+                  {maslowEmojis[maslowLevel-1]} {maslowLabels[maslowLevel-1]}
+                  <span className="text-white/40 font-normal text-[11px] ml-2">({maslowLevel}단계 / 5단계)</span>
+                </p>
+              </div>
+
+              {/* 학술 지표 바 */}
+              <div className="space-y-4">
+                {indicators.map((ind, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-white/80 text-[11px] font-bold flex items-center gap-1.5">{ind.emoji} {ind.label}</span>
+                      <span className="text-white font-black text-xs">{ind.score}%</span>
+                    </div>
+                    <div className="h-2.5 w-full bg-white/8 rounded-full overflow-hidden">
+                      <motion.div
+                        className={`h-full bg-gradient-to-r ${ind.color} rounded-full`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${ind.score}%` }}
+                        transition={{ duration: 1, delay: i * 0.15, ease: 'easeOut' }}
+                      />
+                    </div>
+                    <p className="text-white/40 text-[10px] mt-1">{ind.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* 프랭클 의미 추구 */}
+              <div className="mt-5 p-4 rounded-2xl bg-white/5 border border-white/10">
+                <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-2">프랭클 의미 추구 강도</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">🕯️</span>
+                  <div className="flex-1">
+                    <div className="h-3 bg-white/8 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.round((aq[1]/5)*100)}%` }}
+                        transition={{ duration: 1.2, ease: 'easeOut' }}
+                      />
+                    </div>
+                    <p className="text-white/50 text-[10px] mt-1.5">
+                      {aq[1] >= 4 ? '고난 속에서도 의미를 발견하는 강한 로고테라피 성향' : aq[1] >= 3 ? '의미 추구가 신앙의 중요한 축' : '의미보다 규범·의무 중심의 신앙 동기'}
+                    </p>
+                  </div>
+                  <span className="text-white font-black text-lg">{Math.round((aq[1]/5)*100)}%</span>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ── Swipeable Strengths/Weaknesses ── */}
         <section className="rounded-[2.5rem] border border-white/10 p-6 bg-white/5 backdrop-blur-3xl shadow-xl">

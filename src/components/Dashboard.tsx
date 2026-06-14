@@ -13,6 +13,7 @@ import { getHistory, SurveyHistoryRecord } from '../utils/historyStorage';
 import { DailyWordCard } from './DailyWordCard';
 import { FaithCalendar } from './FaithCalendar';
 import { UserLevelCard } from './UserLevelCard';
+import { DailyPracticeHub } from './DailyPracticeHub';
 
 interface DashboardProps {
   onSelectSurvey: (config: SurveyConfig) => void;
@@ -90,6 +91,9 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
         
         {/* ── 0. 신앙 레벨 카드 (게이미피케이션) ── */}
         <UserLevelCard />
+
+        {/* ── 0.5. 데일리 실천 허브 (스스로 실천하는 신앙 엔진) ── */}
+        <DailyPracticeHub />
 
         {/* ── 1. Hero Section (전체 설명) ── */}
         <section className="text-center space-y-6 pt-8 pb-12 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-b from-[#0d5c3a]/20 via-transparent to-transparent p-6 sm:p-10 border border-[#0d5c3a]/10">

@@ -55,17 +55,30 @@ export interface SurveyResultContent {
   }[];
 }
 
+export interface SurveySection {
+  emoji: string;
+  title: string;
+  intro: string;
+  questionRange: [number, number]; // inclusive [start, end]
+  reactions: {
+    low: string;   // avg <= 2.5
+    mid: string;   // 2.5 < avg <= 3.5
+    high: string;  // avg > 3.5
+  };
+}
+
 export interface SurveyConfig {
   id: string;
   name: string;
   title: string;
   subtitle: string;
-  description: string; // rich intro description
+  description: string;
   color: string;
   icon: string;
   keyPoints?: { icon: string; title: string; description: string }[];
   categories: string[];
   questions: SurveyQuestion[];
+  sections?: SurveySection[];
   getResultContent: (averageScore: number, categoryScores: number[], answers?: Record<number, AnswerData>) => SurveyResultContent;
 }
 

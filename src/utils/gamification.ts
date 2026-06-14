@@ -1,5 +1,6 @@
 import { getHistory } from './historyStorage';
 import { getJournal } from './journalStorage';
+import { getStreakInfo } from './practiceStorage';
 
 export interface UserLevelInfo {
   level: number;
@@ -26,9 +27,14 @@ const LEVEL_THRESHOLDS = [
 export const calculateUserLevel = (): UserLevelInfo => {
   const history = getHistory();
   const journal = getJournal();
+  const streak = getStreakInfo();
 
-  // 점수 계산 (진단 1회당 10점, 묵상 1회당 15점)
-  const points = (history.length * 10) + (journal.length * 15);
+  // 점수 계산 (진단 1회당 10점, 묵상 1회당 15점, 실천 1일당 5점, 연속 보너스 2점/일)
+  const points =
+    (history.length * 10) +
+    (journal.length * 15) +
+    (streak.totalDays * 5) +
+    (streak.current * 2);
 
   let currentLevel = LEVEL_THRESHOLDS[0];
   let nextLevel = LEVEL_THRESHOLDS[1];
@@ -53,6 +59,11 @@ export const calculateUserLevel = (): UserLevelInfo => {
   if (journal.length >= 1) badges.push('✍️ 첫 묵상');
   if (journal.length >= 7) badges.push('📖 말씀 체휼자');
   if (journal.length >= 21) badges.push('✨ 심정의 등대');
+
+  if (streak.current >= 3) badges.push('🔥 3일 연속');
+  if (streak.longest >= 7) badges.push('🔥 7일 정성');
+  if (streak.longest >= 21) badges.push('👑 21일 완주');
+  if (streak.totalDays >= 50) badges.push('🌟 실천의 사람');
 
   return {
     level: currentLevel.level,

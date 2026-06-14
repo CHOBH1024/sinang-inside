@@ -79,17 +79,34 @@ export const SurveyIntro = ({ survey, onBack, onStart }: SurveyIntroProps) => {
           className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/50 dark:border-slate-800 rounded-[2rem] p-3 shadow-2xl"
         >
           <div className="space-y-2">
+            {/* 일반 진단 버튼 */}
             <motion.button
-              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(survey.questions.length)}
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(6)}
               className="w-full relative overflow-hidden flex items-center justify-between px-6 py-5 rounded-[1.5rem] bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white transition-all shadow-lg hover:shadow-[#0d5c3a]/20 cursor-pointer"
             >
               <div className="text-left relative z-10">
                 <p className="text-white font-black text-lg flex items-center gap-2">
-                  진단 시작하기 <span className="text-xs bg-[#b8860b] text-white px-2.5 py-0.5 rounded-full font-bold">{survey.questions.length}문항</span>
+                  일반 진단 <span className="text-xs bg-white/20 text-white px-2.5 py-0.5 rounded-full font-bold">6문항</span>
                 </p>
-                <p className="text-white/80 text-[11px] font-bold mt-1">학술적 신앙 성향 및 심정 스펙트럼 분석 · 약 1분 소요</p>
+                <p className="text-white/80 text-[11px] font-bold mt-1">신앙 성향 & 심정 스펙트럼 · 약 1분 소요</p>
               </div>
               <ChevronRight size={20} className="text-white/80 relative z-10" />
+            </motion.button>
+
+            {/* 학술 연구자 진단 버튼 */}
+            <motion.button
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleStart(12)}
+              className="w-full relative overflow-hidden flex items-center justify-between px-6 py-5 rounded-[1.5rem] bg-slate-900 dark:bg-slate-800 border border-slate-700 text-white transition-all cursor-pointer group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 via-indigo-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[1.5rem]" />
+              <div className="text-left relative z-10">
+                <p className="text-white font-black text-lg flex items-center gap-2">
+                  🔬 학술 연구자 버전
+                  <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full font-bold tracking-wide">12문항</span>
+                </p>
+                <p className="text-slate-400 text-[11px] font-bold mt-1">올포트 · 프랭클 · 융 · 매슬로 · 로어 · 가드너 학술 지표 포함 · 약 3분</p>
+              </div>
+              <ChevronRight size={20} className="text-slate-500 group-hover:text-white transition-colors relative z-10" />
             </motion.button>
           </div>
         </motion.div>
