@@ -4,7 +4,7 @@ import { Dashboard } from './components/Dashboard';
 import { SurveyIntro } from './components/SurveyIntro';
 import { SurveyEngine } from './components/SurveyEngine';
 import { AnalyzingScreen } from './components/AnalyzingScreen';
-import { SurveyConfig, AnswerData, UserInfo } from './types';
+import { SurveyConfig, AnswerData, UserInfo, SurveyMode } from './types';
 import { surveys } from './data/surveys';
 
 const SurveyResults = lazy(() => import('./components/SurveyResults').then(module => ({ default: module.SurveyResults })));
@@ -24,7 +24,7 @@ type AppState = 'dashboard' | 'intro' | 'hr-intake' | 'engine' | 'analyzing' | '
 export default function App() {
   const [appState, setAppState] = useState<AppState>('dashboard');
   const [activeSurvey, setActiveSurvey] = useState<SurveyConfig | null>(surveys[0]);
-  const [modeLimit, setModeLimit] = useState<number>(12);
+  const [surveyMode, setSurveyMode] = useState<SurveyMode>('general');
   const [answers, setAnswers] = useState<Record<number, AnswerData>>({});
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
@@ -62,6 +62,7 @@ export default function App() {
 
           setActiveSurvey(survey);
           setAnswers(mockAnswers);
+          setSurveyMode('general');
           setAppState('results');
         }
       }).catch(err => {
@@ -76,8 +77,8 @@ export default function App() {
     setAppState('intro');
   };
 
-  const handleStartSurvey = (limit: number) => {
-    setModeLimit(limit);
+  const handleStartSurvey = (mode: SurveyMode) => {
+    setSurveyMode(mode);
     setAppState('hr-intake');
   };
 
@@ -139,10 +140,10 @@ export default function App() {
         )}
         
         {appState === 'engine' && activeSurvey && (
-          <SurveyEngine 
-            survey={activeSurvey} 
-            modeLimit={modeLimit} 
-            onComplete={handleCompleteSurvey} 
+          <SurveyEngine
+            survey={activeSurvey}
+            mode={surveyMode}
+            onComplete={handleCompleteSurvey}
           />
         )}
 
@@ -151,12 +152,13 @@ export default function App() {
         )}
         
         {appState === 'results' && activeSurvey && (
-          <SurveyResults 
-            survey={activeSurvey} 
-            answers={answers} 
+          <SurveyResults
+            survey={activeSurvey}
+            answers={answers}
+            mode={surveyMode}
             userInfo={userInfo}
-            onRestart={handleRestart} 
-            onHome={handleHome} 
+            onRestart={handleRestart}
+            onHome={handleHome}
           />
         )}
       </Suspense>

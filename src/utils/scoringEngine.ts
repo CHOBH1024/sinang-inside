@@ -1,4 +1,4 @@
-import { SurveyConfig, AnswerData } from '../types';
+import { SurveyConfig, AnswerData, SurveyMode } from '../types';
 
 export interface ScoringResult {
   averageScore: number;
@@ -7,21 +7,25 @@ export interface ScoringResult {
   synergyBonuses: { category: number, bonus: number }[];
 }
 
-export function calculateScores(survey: SurveyConfig, answers: Record<number, AnswerData>): ScoringResult {
+export function calculateScores(survey: SurveyConfig, answers: Record<number, AnswerData>, mode: SurveyMode = 'general'): ScoringResult {
   const categoryTotals: Record<number, number> = {};
   const categoryCounts: Record<number, number> = {};
-  
+
   let totalScore = 0;
   let answeredCount = 0;
   let latencyPenalty = 0;
   let crossValidationPenalty = 0;
   let crossValidationCount = 0;
 
-  const qLen = survey.questions.length;
+  // 전문(FC) 모드는 professionalQuestions 배열을 기준으로 채점한다.
+  const questionList = (mode === 'professional' && survey.professionalQuestions?.length)
+    ? survey.professionalQuestions
+    : survey.questions;
+  const qLen = questionList.length;
 
   for (const [idxStr, answerData] of Object.entries(answers)) {
     const idx = parseInt(idxStr, 10);
-    const q = survey.questions[idx % Math.max(qLen, 1)];
+    const q = questionList[idx % Math.max(qLen, 1)];
     
     if (!q) continue;
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SurveyConfig, AnswerData, UserInfo } from '../types';
+import { SurveyConfig, AnswerData, UserInfo, SurveyMode } from '../types';
 import { RadarChart3D } from './RadarChart3D';
 import { HrPdfReport } from './HrPdfReport';
 import { SnsExportButton } from './SnsExportButton';
@@ -64,13 +64,14 @@ const COMPAT_DESC: Record<string, string> = {
 interface SurveyResultsProps {
   survey: SurveyConfig;
   answers: Record<number, AnswerData>;
+  mode?: SurveyMode;
   userInfo: UserInfo | null;
   onRestart: () => void;
   onHome: () => void;
 }
 
-export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: SurveyResultsProps) => {
-  const scores = calculateScores(survey, answers);
+export const SurveyResults = ({ survey, answers, mode = 'general', userInfo, onRestart, onHome }: SurveyResultsProps) => {
+  const scores = calculateScores(survey, answers, mode);
   const resultData = survey.getResultContent(scores.averageScore, scores.categoryScores, answers);
   const recommendedChallenge = recommendChallenge(survey.id);
 
@@ -503,8 +504,8 @@ export const SurveyResults = ({ survey, answers, userInfo, onRestart, onHome }: 
           </div>
         </section>
 
-        {/* ── 학술 연구자 버전: 심층 분석 블록 ── */}
-        {Object.keys(answers).some(k => parseInt(k) >= 6) && (() => {
+        {/* ── 학술 연구자 버전: 심층 분석 블록 (레거시 academic 모드 전용) ── */}
+        {mode === 'academic' && Object.keys(answers).some(k => parseInt(k) >= 6) && (() => {
           const aq = [6,7,8,9,10,11].map(i => answers[i]?.value ?? 3);
           const allportScore  = Math.round(((aq[0] + aq[1]) / 2) / 5 * 100);
           const jungScore     = Math.round(((aq[2]) / 5) * 100);

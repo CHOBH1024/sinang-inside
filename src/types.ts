@@ -1,3 +1,9 @@
+// 진단 진행 모드
+// - general: 일반 진단 (Likert) — 레거시 6문항 / 재설계 30문항
+// - academic: 레거시 학술 연구자 12문항 (Likert)
+// - professional: 재설계 전문 진단 (강제선택 Forced Choice 40문항)
+export type SurveyMode = 'general' | 'academic' | 'professional';
+
 export interface UserInfo {
   name: string;
   region: string; // 교구 또는 소속
@@ -79,6 +85,9 @@ export interface SurveyConfig {
   categories: string[];
   questions: SurveyQuestion[];
   sections?: SurveySection[];
+  // 전문 진단(강제선택 40문항) — 존재하면 인트로에 전문 모드 버튼 노출
+  professionalQuestions?: SurveyQuestion[];
+  professionalSections?: SurveySection[];
   getResultContent: (averageScore: number, categoryScores: number[], answers?: Record<number, AnswerData>) => SurveyResultContent;
 }
 

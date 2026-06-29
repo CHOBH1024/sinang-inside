@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSwipeable } from 'react-swipeable';
-import { SurveyConfig, SurveySection, AnswerData } from '../types';
+import { SurveyConfig, SurveySection, SurveyQuestion, AnswerData, SurveyMode } from '../types';
 import { themeMap } from '../theme';
 import { playPopSound } from '../utils/audioEngine';
 import { ArrowLeft } from 'lucide-react';
@@ -11,18 +11,17 @@ type Phase = 'section-intro' | 'question' | 'section-reaction' | 'done';
 
 interface SurveyEngineProps {
   survey: SurveyConfig;
-  modeLimit: number;
+  mode: SurveyMode;
   onComplete: (answers: Record<number, AnswerData>) => void;
 }
 
-function buildSections(survey: SurveyConfig): SurveySection[] {
-  if (survey.sections && survey.sections.length > 0) return survey.sections;
-  const total = survey.questions.length;
-  const per = Math.ceil(total / 3);
+function fallbackSections(questions: SurveyQuestion[], categories: string[]): SurveySection[] {
+  const total = questions.length;
+  const per = Math.max(1, Math.ceil(total / 3));
   return Array.from({ length: 3 }, (_, i) => ({
     emoji: ['🌱', '✨', '🌟'][i],
     title: `섹션 ${i + 1}`,
-    intro: `${survey.categories.slice(i * per, (i + 1) * per).join(', ')}\n에 대해 물어볼게요.`,
+    intro: `${categories.slice(i * per, (i + 1) * per).join(', ')}\n에 대해 물어볼게요.`,
     questionRange: [i * per, Math.min((i + 1) * per - 1, total - 1)] as [number, number],
     reactions: {
       low:  '흥미로운 신앙의 모습이네요!',
@@ -30,6 +29,34 @@ function buildSections(survey: SurveyConfig): SurveySection[] {
       high: '깊은 신앙의 뿌리가 느껴져요!',
     },
   }));
+}
+
+// 모드별로 사용할 문항/섹션 세트를 결정한다.
+// - 재설계 진단(professionalQuestions 보유): general=questions/sections(전체), professional=FC 세트
+// - 레거시 진단: general=앞 3섹션(6문항), academic=전체 6섹션(12문항)
+function getModeData(survey: SurveyConfig, mode: SurveyMode): { questions: SurveyQuestion[]; sections: SurveySection[] } {
+  const isRedesigned = !!(survey.professionalQuestions && survey.professionalQuestions.length);
+
+  let questions: SurveyQuestion[];
+  let sectionsRaw: SurveySection[];
+
+  if (mode === 'professional' && isRedesigned) {
+    questions = survey.professionalQuestions!;
+    sectionsRaw = survey.professionalSections ?? [];
+  } else if (mode === 'general' && !isRedesigned) {
+    // 레거시 일반: 앞 3섹션(질문 0~5)만 사용
+    questions = survey.questions;
+    sectionsRaw = (survey.sections ?? []).slice(0, 3);
+  } else {
+    // 재설계 일반 / 레거시 학술: 해당 questions + 전체 sections
+    questions = survey.questions;
+    sectionsRaw = survey.sections ?? [];
+  }
+
+  const sections = sectionsRaw.length ? sectionsRaw : fallbackSections(questions, survey.categories);
+  const maxEnd = sections.reduce((m, s) => Math.max(m, s.questionRange[1]), 0);
+  const activeQuestions = questions.slice(0, Math.min(questions.length, maxEnd + 1));
+  return { questions: activeQuestions, sections };
 }
 
 function getSectionAvg(answers: Record<number, AnswerData>, range: [number, number]): number {
@@ -77,7 +104,7 @@ const variants = {
   }),
 };
 
-export const SurveyEngine = ({ survey, modeLimit, onComplete }: SurveyEngineProps) => {
+export const SurveyEngine = ({ survey, mode, onComplete }: SurveyEngineProps) => {
   const [phase, setPhase] = useState<Phase>('section-intro');
   const [currentIdx, setCurrentIdx] = useState(0);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
@@ -86,12 +113,11 @@ export const SurveyEngine = ({ survey, modeLimit, onComplete }: SurveyEngineProp
   const [direction, setDirection] = useState(1);
 
   const t = themeMap[survey.color] || themeMap['blue'];
-  const actualLimit = Math.min(modeLimit, survey.questions.length);
-  const activeQuestions = useMemo(
-    () => survey.questions.slice(0, Math.max(actualLimit, 1)),
-    [survey.questions, actualLimit]
+  const isForcedChoice = mode === 'professional';
+  const { questions: activeQuestions, sections } = useMemo(
+    () => getModeData(survey, mode),
+    [survey, mode]
   );
-  const sections = useMemo(() => buildSections(survey), [survey]);
 
   useEffect(() => {
     if (phase === 'question') setQuestionStartTime(Date.now());
@@ -211,9 +237,15 @@ export const SurveyEngine = ({ survey, modeLimit, onComplete }: SurveyEngineProp
         transition={{ delay: 0.88 }}
         className="flex items-center gap-3 text-white/35 text-[11px] font-bold mb-10 bg-white/5 px-5 py-2.5 rounded-full border border-white/10"
       >
-        <span>1 = 전혀 아니다</span>
-        <span className="text-white/15">|</span>
-        <span>5 = 매우 그렇다</span>
+        {isForcedChoice ? (
+          <span>A · B 중 더 끌리는 쪽을 선택하세요</span>
+        ) : (
+          <>
+            <span>1 = 전혀 아니다</span>
+            <span className="text-white/15">|</span>
+            <span>5 = 매우 그렇다</span>
+          </>
+        )}
       </motion.div>
 
       <motion.button
@@ -276,7 +308,9 @@ export const SurveyEngine = ({ survey, modeLimit, onComplete }: SurveyEngineProp
           transition={{ delay: 0.9 }}
           className="inline-block mt-3 mb-10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/10 bg-white/5 text-white/40"
         >
-          이 섹션 평균 {sectionAvg.toFixed(1)}점
+          {isForcedChoice
+            ? (sectionAvg > 3.5 ? '한쪽 성향이 뚜렷해요' : sectionAvg < 2.5 ? '한쪽 성향이 뚜렷해요' : '균형 잡힌 선택이에요')
+            : `이 섹션 평균 ${sectionAvg.toFixed(1)}점`}
         </motion.span>
 
         <motion.button

@@ -146,70 +146,70 @@ export const BalanceGame = ({ onBack }: BalanceGameProps) => {
     const tPercent = Math.round((tCount / totalTM) * 100);
     const mPercent = 100 - tPercent;
 
-    // 9개 프로필 완전 매핑
-    let profileName = "천일국 조화의 등대";
+    // 9개 프로필 완전 매핑 (내면↔관계 × 원칙↔자유)
+    let profileName = "조화로운 균형가";
     let profileEmoji = "⚖️";
-    let profileHeadline = "수직과 수평, 전통과 현대의 균형을 완성하는 지혜로운 신앙인";
-    let profileDesc = "당신은 신앙에 있어서 특정한 가치에 치우치지 않는 온전한 중용과 참사랑의 실현을 지향합니다. 기도로 시작하여 봉사로 완성하고, 원리를 지키면서도 세상을 넓게 품어내는 태도는 공동체의 든든한 균형추입니다.";
-    let profileStrengths = ["뛰어난 중재력과 조화로운 시각", "안정적이고 건강한 신앙 패턴 유지", "상황에 맞는 유연한 실천력"];
-    let profileAdvice = "두 가지 방향을 다 챙기려다 에너지가 너무 분산될 수 있으니, 섭리적 결단이 시급한 시기에는 명확한 깃발을 꽂는 용기를 발휘해 보세요.";
+    let profileHeadline = "내면과 관계, 원칙과 자유의 균형을 갖춘 유연한 신앙인";
+    let profileDesc = "당신은 어느 한쪽에 치우치지 않고 상황에 맞게 오가는 균형의 사람입니다. 혼자도 함께도 편안하고, 원칙을 지키면서도 자유를 누릴 줄 압니다. 공동체에서 자연스러운 다리 역할을 하는 든든한 균형추입니다.";
+    let profileStrengths = ["치우치지 않는 유연한 시각", "사람을 잇는 조화로운 중재력", "상황에 맞는 균형 감각"];
+    let profileAdvice = "모든 결을 다 품으려다 색이 흐려질 수 있어요. 정말 중요한 순간엔 '나는 이쪽'이라고 분명히 깃발을 꽂아 보세요.";
 
     if (vPercent >= 70 && tPercent >= 70) {
-      profileName = "고결한 정통 탕감 수호자";
-      profileEmoji = "⚔️";
-      profileHeadline = "원리의 절대성과 역사적 탕감 조건을 신앙의 뼈대로 삼는 정통파";
-      profileDesc = "당신은 타협 없는 원리강론 자구 보존과, 뼈를 깎는 기도 정성 조건을 가장 소중히 여기는 진지한 구도자입니다. 참아버님의 탕감 승리 노정을 상속받아 살아가며 세속주의에 맞서는 방파제 역할을 합니다.";
-      profileStrengths = ["타협 없는 교리적 순수성", "강인한 인내와 높은 조건정성 이행력", "강한 섭리 오너십"];
-      profileAdvice = "엄격함이 타인을 정죄하는 율법주의로 흐르지 않도록, '무조건적인 참사랑과 용서'의 살을 뼈대 위에 따뜻하게 덧입히십시오.";
-    } else if (vPercent >= 70 && mPercent >= 70) {
-      profileName = "점진적 계시의 영적 사색가";
+      profileName = "고요한 원칙의 수도자";
       profileEmoji = "🧘";
-      profileHeadline = "수직적 기도 관계 속에서 살아있는 계시의 변화를 감지하는 사색가";
-      profileDesc = "당신은 기도를 통한 종적인 영적 일체를 중시하면서도, 독생녀 신학이나 천일국 안착의 유연한 변화를 열린 마음으로 사색합니다. 매일의 묵상 속에서 큰 섭리의 방향을 체율합니다.";
-      profileStrengths = ["깊은 명상적 영성과 1:1 관계성", "섭리 진전에 대한 높은 지적 적응력", "도덕적 차분함"];
-      profileAdvice = "사색에만 머물지 마시고, 깨달은 비전을 이웃을 돕는 실질적인 활동으로 손발로 연계해 나가세요.";
+      profileHeadline = "홀로의 깊은 묵상과 분명한 원칙을 신앙의 중심에 둔 단단한 수도자";
+      profileDesc = "당신은 혼자만의 고요 속에서 가장 깊어지고, 분명한 원칙과 규율 위에서 안정감을 느낍니다. 흔들리지 않는 내면과 단단한 기준이 당신의 큰 힘입니다.";
+      profileStrengths = ["깊은 내적 묵상력", "흔들리지 않는 원칙", "단단한 자기 관리"];
+      profileAdvice = "그 깊은 은혜를 가끔은 사람들과 나누고, 원칙 너머의 자유로움도 한 번 누려 보세요. 더 넓어집니다.";
+    } else if (vPercent >= 70 && mPercent >= 70) {
+      profileName = "사색하는 자유 영혼";
+      profileEmoji = "🌌";
+      profileHeadline = "홀로의 묵상 속에서 자유롭고 직관적으로 신앙을 빚어가는 사색가";
+      profileDesc = "당신은 혼자만의 시간에 깊어지면서도 정해진 틀보다 직관과 영감을 따르는 자유로운 영혼입니다. 사색과 창의가 어우러진 신선한 신앙을 지녔습니다.";
+      profileStrengths = ["깊은 사색과 영적 감수성", "자유로운 직관과 창의", "열린 내면"];
+      profileAdvice = "사색과 영감에만 머물지 말고, 가끔 사람들과 나누고 작은 틀도 세워 보세요. 자유에 뿌리가 더해집니다.";
     } else if (hPercent >= 70 && tPercent >= 70) {
-      profileName = "가문 구원의 종족 전도사";
-      profileEmoji = "🏠";
-      profileHeadline = "일가친척을 축복으로 인도하여 가문의 주권을 복귀하려는 목회자";
-      profileDesc = "당신은 축복의 가치와 순결 혈통의 중요성을 깊이 인식하며, 이를 가족과 친지들에게 직접 전파하여 신종족메시아 사명을 실현하는 데 온 삶을 던집니다.";
-      profileStrengths = ["강력한 전도력과 가문에 대한 책임감", "배려 깊은 목회적 돌봄", "가정의 삼대권 가치 보존"];
-      profileAdvice = "거대한 공적 섭리 전략과 초종교 평화 연대의 비전도 가문 복귀와 닿아 있음을 묵상하고 스케일을 넓히십시오.";
+      profileName = "원칙 있는 실천 리더";
+      profileEmoji = "🛡️";
+      profileHeadline = "사람들과 함께하는 실천을 분명한 원칙 위에서 이끄는 든든한 리더";
+      profileDesc = "당신은 관계와 실천 속에서 살아나면서도 분명한 기준과 질서를 소중히 여깁니다. 함께 가되 중심을 잃지 않는 신뢰감 있는 리더십이 강점입니다.";
+      profileStrengths = ["관계 속 실천력", "분명한 원칙과 책임감", "신뢰받는 리더십"];
+      profileAdvice = "원칙을 지키되 사람마다의 사정도 헤아리고, 가끔 새로운 시도에도 마음을 열어 보세요. 더 유연해집니다.";
     } else if (hPercent >= 70 && mPercent >= 70) {
-      profileName = "공생공영의 사회 혁신가";
-      profileEmoji = "🌱";
-      profileHeadline = "종교적 울타리를 허물고 참사랑으로 사회 정의를 구현하는 혁신가";
-      profileDesc = "당신은 교리 암기를 거부하고, 참부모님이 선포하신 공생공영공의 이상을 사회 봉사, 환경 운동, 초종교 평화 활동을 통해 세상에 실체화하는 데 헌신합니다.";
-      profileStrengths = ["압도적인 현장 실천성과 대외 소통력", "약자를 돕는 공평한 참사랑주의", "트렌디한 사역 기획"];
-      profileAdvice = "사회 혁신이 세속 봉사 단체처럼 희석되지 않도록, 매주 훈독회를 통해 영적 정체성을 재충전하십시오.";
+      profileName = "자유로운 관계 활동가";
+      profileEmoji = "🌈";
+      profileHeadline = "사람들과 어울리며 자유롭고 창의롭게 신앙을 펼치는 활동가";
+      profileDesc = "당신은 사람들과의 관계와 실천에서 살아나고, 정해진 틀보다 새롭고 자유로운 방식을 즐깁니다. 그 활기와 창의가 공동체에 신선함을 불어넣습니다.";
+      profileStrengths = ["뛰어난 관계와 소통력", "자유롭고 창의적인 실천", "공동체에 주는 활기"];
+      profileAdvice = "활기와 자유 곁에 홀로 충전하는 시간과 작은 원칙 하나를 더해 보세요. 더 오래갑니다.";
     } else if (vPercent >= 60 && tPercent >= 60) {
-      profileName = "개척 정성의 기도 전사";
-      profileEmoji = "🛐";
-      profileHeadline = "고요한 골방의 기도와 전통 보존이 삶의 축인 신앙 수호자";
-      profileDesc = "당신은 새벽 기도, 금식, 정성 조건을 통한 수직적 영성 강화와 원리의 원형을 지키는 것을 동시에 추구합니다. 흔들리지 않는 영적 근간을 제공합니다.";
-      profileStrengths = ["탁월한 기도 인내력", "말씀 자구에 대한 높은 충성도", "공적 질서 의식"];
-      profileAdvice = "골방의 기도가 세상을 품는 수평적 시야로 확장될 때, 진정으로 하늘의 기쁨이 완성됩니다.";
+      profileName = "차분한 정진가";
+      profileEmoji = "🕯️";
+      profileHeadline = "고요한 내면과 성실한 원칙으로 꾸준히 정진하는 차분한 신앙인";
+      profileDesc = "당신은 혼자만의 시간에 차분히 머물며 정해진 원칙을 성실히 지켜 갑니다. 그 조용한 꾸준함이 신앙의 안정된 뿌리가 됩니다.";
+      profileStrengths = ["차분한 묵상과 성실함", "안정적인 자기 관리", "신뢰감 있는 꾸준함"];
+      profileAdvice = "가끔은 사람들과 어울리고 자유로운 시도도 해보세요. 정진에 생기가 더해집니다.";
     } else if (vPercent >= 60 && mPercent >= 60) {
-      profileName = "영적 혁신의 내면 탐험가";
+      profileName = "내면의 탐험가";
       profileEmoji = "🔮";
-      profileHeadline = "기도를 통해 새로운 섭리적 비전을 열어가는 내면 혁신가";
-      profileDesc = "당신은 깊은 기도 생활을 유지하면서도 기존 제도나 해석에 안주하지 않고, 영적 감각을 통해 새로운 시대의 섭리적 방향을 모색합니다.";
-      profileStrengths = ["높은 영적 감수성", "새로운 섭리관에 대한 개방성", "자기주도적 성찰력"];
-      profileAdvice = "개인적 비전이 공동체의 공적 합의와 동떨어지지 않도록, 함께 기도하고 대화하는 시간을 늘리세요.";
+      profileHeadline = "혼자만의 묵상 속에서 자유롭게 새로운 길을 모색하는 내면의 탐험가";
+      profileDesc = "당신은 깊은 내면을 유지하면서도 기존 틀에 안주하지 않고 새로운 방향을 직관적으로 모색합니다. 사색과 자유가 어우러진 사람입니다.";
+      profileStrengths = ["깊은 영적 감수성", "새로움에 대한 개방성", "자기주도적 성찰력"];
+      profileAdvice = "내면의 발견을 사람들과 나누고 함께 호흡해 보세요. 혼자만의 길이 함께의 길로 넓어집니다.";
     } else if (hPercent >= 60 && tPercent >= 60) {
-      profileName = "전통 봉사의 목양 수호자";
-      profileEmoji = "🐑";
-      profileHeadline = "전통적 원리와 이웃 섬김을 양립하는 충직한 목양 신앙인";
-      profileDesc = "당신은 원리의 전통적 해석을 굳건히 지키면서도 식구들의 아픔을 직접 현장에서 달래주는 따뜻한 목양의 마음을 지녔습니다.";
-      profileStrengths = ["높은 공동체 신뢰도", "전통과 현장 봉사의 양립", "안정감 있는 리더십"];
-      profileAdvice = "세상이 빠르게 변하는 시대에 젊은 세대와의 소통 언어도 함께 업데이트해 보세요.";
+      profileName = "신뢰의 동행가";
+      profileEmoji = "🤝";
+      profileHeadline = "사람들과 함께하는 실천을 원칙 위에서 든든히 받쳐주는 동행가";
+      profileDesc = "당신은 사람들과 함께 걸으면서도 분명한 기준을 지키는 신뢰의 사람입니다. 관계의 따뜻함과 원칙의 단단함을 함께 지녔습니다.";
+      profileStrengths = ["따뜻한 동행과 신뢰", "원칙 있는 안정감", "공동체의 버팀목"];
+      profileAdvice = "변화하는 시대의 새로운 언어와 자유로운 시도에도 마음을 열어 보세요. 더 넓게 품게 됩니다.";
     } else if (hPercent >= 60 && mPercent >= 60) {
-      profileName = "참사랑 문화의 트렌드세터";
+      profileName = "활기찬 어울림가";
       profileEmoji = "✨";
-      profileHeadline = "현대적 감각으로 참사랑을 세상에 전파하는 문화 혁신가";
-      profileDesc = "당신은 교리적 형식보다 삶 속에서 참사랑이 자연스럽게 흘러넘치는 것을 중시하며, SNS, 문화 콘텐츠, 청년 모임 등을 통해 신앙의 새로운 접점을 창조합니다.";
-      profileStrengths = ["탁월한 문화적 감수성", "젊은 세대와의 소통력", "창의적 사역 기획력"];
-      profileAdvice = "트렌디한 접근이 말씀의 깊은 뿌리와 단절되지 않도록, 정기적으로 원리강론을 정독하는 시간을 사수하세요.";
+      profileHeadline = "사람들과 자유롭게 어울리며 신앙에 생기를 더하는 활기찬 신앙인";
+      profileDesc = "당신은 사람들과의 어울림 속에서 살아나고 자유로운 방식을 즐기는 활기찬 사람입니다. 그 밝은 에너지가 공동체에 온기를 더합니다.";
+      profileStrengths = ["밝은 관계와 소통력", "자유롭고 유연한 태도", "공동체에 주는 생기"];
+      profileAdvice = "활기 곁에 홀로 깊어지는 시간과 작은 기준 하나를 더하면, 그 빛이 흔들리지 않습니다.";
     }
 
     return { name: profileName, emoji: profileEmoji, headline: profileHeadline, desc: profileDesc, strengths: profileStrengths, advice: profileAdvice, vPercent, hPercent, tPercent, mPercent };
@@ -219,7 +219,7 @@ export const BalanceGame = ({ onBack }: BalanceGameProps) => {
   const curQ = activeQuestions[currentIdx];
 
   const handleShare = () => {
-    const text = `🛐 [신앙인사이드 밸런스게임] 완료!\n나의 신앙 밸런스 프로필은: "${res.name}" ${res.emoji}\n\n- 수직 영성: ${res.vPercent}%\n- 수평 실천: ${res.hPercent}%\n- 전통 보존: ${res.tPercent}%\n- 현대 안착: ${res.mPercent}%\n\n지금 테스트하러 가기 👉 https://sinang-inside.vercel.app`;
+    const text = `🛐 [신앙인사이드 밸런스게임] 완료!\n나의 신앙 성향 프로필은: "${res.name}" ${res.emoji}\n\n- 내면 지향: ${res.vPercent}%\n- 관계·실천 지향: ${res.hPercent}%\n- 원칙·규율: ${res.tPercent}%\n- 자유·직관: ${res.mPercent}%\n\n지금 테스트하러 가기 👉 https://sinang-inside.vercel.app`;
     if (navigator.share) {
       navigator.share({ title: `신앙 밸런스 게임 결과: ${res.name}`, text, url: 'https://sinang-inside.vercel.app' });
     } else {
@@ -271,7 +271,7 @@ export const BalanceGame = ({ onBack }: BalanceGameProps) => {
                 <span className="text-[#b8860b]">신앙 밸런스 게임</span>
               </h2>
               <p className="text-slate-400 text-sm sm:text-base leading-relaxed word-keep max-w-md mx-auto">
-                30가지 신앙적 딜레마를 통해 나의 참부모 신학 지향성과 실천 스펙트럼의 진짜 모습을 탐험하세요. 매번 랜덤으로 섞여서 새로운 경험!
+                30가지 신앙 딜레마로 나의 신앙 성향 밸런스 — 내면↔관계, 원칙↔자유 두 축의 진짜 결을 탐험하세요. 정답은 없어요. 매번 랜덤으로 섞여 새로운 경험!
               </p>
             </div>
 
@@ -473,12 +473,12 @@ export const BalanceGame = ({ onBack }: BalanceGameProps) => {
 
               {/* 지표 분석 */}
               <div className="space-y-5 bg-[#0b130f] p-5 rounded-2xl border border-[#0d5c3a]/25">
-                <p className="text-xs font-bold text-[#b8860b] flex items-center gap-1.5"><HelpCircle size={14} /> 4대 영성 스펙트럼 지표</p>
-                
+                <p className="text-xs font-bold text-[#b8860b] flex items-center gap-1.5"><HelpCircle size={14} /> 두 축으로 보는 나의 신앙 성향</p>
+
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[11px] font-bold text-slate-300 font-mono">
-                    <span>🙏 수직적 기도 ({res.vPercent}%)</span>
-                    <span>🤝 수평적 실천 ({res.hPercent}%)</span>
+                    <span>🧘 내면 지향 ({res.vPercent}%)</span>
+                    <span>🤝 관계·실천 지향 ({res.hPercent}%)</span>
                   </div>
                   <div className="w-full h-3 bg-[#111e17] rounded-full overflow-hidden flex">
                     <div className="h-full bg-[#0d5c3a] transition-all" style={{ width: `${res.vPercent}%` }}></div>
@@ -488,8 +488,8 @@ export const BalanceGame = ({ onBack }: BalanceGameProps) => {
 
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[11px] font-bold text-slate-300 font-mono">
-                    <span>📜 전통 수호 ({res.tPercent}%)</span>
-                    <span>🚀 현대 안착 ({res.mPercent}%)</span>
+                    <span>📜 원칙·규율 ({res.tPercent}%)</span>
+                    <span>🌈 자유·직관 ({res.mPercent}%)</span>
                   </div>
                   <div className="w-full h-3 bg-[#111e17] rounded-full overflow-hidden flex">
                     <div className="h-full bg-[#b8860b] transition-all" style={{ width: `${res.tPercent}%` }}></div>
