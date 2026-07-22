@@ -69,16 +69,18 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
           <span className="text-white flex items-center gap-2 text-base md:text-lg tracking-wider font-extrabold uppercase">
             <span className="text-[#b8860b] text-xl">🛐</span> 신앙인사이드 <span className="text-xs bg-[#b8860b]/20 text-[#b8860b] px-2 py-0.5 rounded border border-[#b8860b]/40 font-mono">SINANG INSIDE</span>
           </span>
-          <div className="flex gap-3 sm:gap-6 text-[#b8860b] hover:text-[#fbbf24] transition-colors">
+          <div className="flex gap-2 sm:gap-3 text-[#b8860b]">
             <button 
+              type="button"
               onClick={() => onNavigate && onNavigate('journal')}
-              className="hover:underline flex items-center gap-1 text-sm font-bold"
+              className="toss-press flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-bold hover:bg-[#b8860b]/10 hover:text-[#fbbf24] transition-colors"
             >
               ✍️ 묵상 일지
             </button>
             <button 
+              type="button"
               onClick={() => onNavigate && onNavigate('columns')}
-              className="hover:underline flex items-center gap-1 text-sm font-bold"
+              className="toss-press flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-bold hover:bg-[#b8860b]/10 hover:text-[#fbbf24] transition-colors"
             >
               <BookOpen size={16} /> 신학 칼럼
             </button>
@@ -95,86 +97,152 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
         {/* ── 0.5. 데일리 실천 허브 (스스로 실천하는 신앙 엔진) ── */}
         <DailyPracticeHub />
 
-        {/* ── 1. Hero Section (전체 설명) ── */}
-        <section className="text-center space-y-6 pt-8 pb-12 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-b from-[#0d5c3a]/20 via-transparent to-transparent p-6 sm:p-10 border border-[#0d5c3a]/10">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#0d5c3a]/10 rounded-full blur-[100px] pointer-events-none"></div>
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+        {/* ── 1. Hero — 3초 안에 '나를 위한 것' 느낌 ── */}
+        <section className="text-center space-y-5 pt-6 pb-10 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-b from-[#0d5c3a]/25 via-[#0d5c3a]/5 to-transparent p-6 sm:p-10 border border-[#0d5c3a]/15">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[28rem] h-[28rem] bg-[#0d5c3a]/20 rounded-full blur-[100px] pointer-events-none soft-glow-pulse" />
+          <div className="absolute -right-10 top-10 w-40 h-40 bg-[#b8860b]/10 rounded-full blur-[60px] pointer-events-none" />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-4"
+            transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+            className="relative z-10 space-y-4"
           >
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white flex flex-col items-center justify-center gap-2">
-              <span className="text-[#b8860b] text-3xl font-bold tracking-[0.2em] uppercase mb-2">Theological Diagnostics</span>
-              <span>신앙 성향 진단 허브</span>
-            </h1>
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-3xl mx-auto word-keep font-medium pt-2">
-              {seoBio}
-            </p>
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="pt-4"
+            <motion.span
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.08 }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wide text-[#b8860b] bg-[#b8860b]/10 border border-[#b8860b]/30"
             >
-              <button
-                onClick={() => onNavigate && onNavigate('balanceGame')}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#b8860b] to-[#fbbf24] text-[#0b130f] hover:brightness-110 active:scale-95 transition-all font-black text-sm sm:text-base rounded-2xl shadow-lg shadow-[#b8860b]/20 cursor-pointer"
+              🕊️ 오늘, 나의 신앙 결을 비춰보세요
+            </motion.span>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white flex flex-col items-center justify-center gap-1.5">
+              <span className="text-[#b8860b] text-xs sm:text-sm font-bold tracking-[0.22em] uppercase">
+                Theological Diagnostics
+              </span>
+              <span className="leading-[1.15]">
+                3분이면 알 수 있는
+                <br className="sm:hidden" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fbbf24] via-[#b8860b] to-[#86efac]">
+                  {' '}나의 신앙 성향
+                </span>
+              </span>
+            </h1>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto word-keep font-medium">
+              7가지 진단으로 기도·말씀·관계·사명의 결을 읽어드려요.
+              <span className="hidden sm:inline"> </span>
+              <br className="sm:hidden" />
+              결과는 페르소나와 실천 챌린지로 이어집니다.
+            </p>
+            <p className="sr-only">{seoBio}</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => handleSelectSurvey('survey-spirituality')}
+                className="toss-btn-primary inline-flex items-center justify-center gap-2 px-7 py-3.5 min-w-[200px] bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white font-black text-sm sm:text-base rounded-2xl shadow-lg shadow-[#0d5c3a]/30 cursor-pointer"
               >
-                ⚖️ 신앙 밸런스 게임 30선 시작하기
-              </button>
-            </motion.div>
+                <Sparkles size={16} /> 심정영성 진단 시작
+              </motion.button>
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => onNavigate && onNavigate('balanceGame')}
+                className="toss-btn-ghost inline-flex items-center justify-center gap-2 px-6 py-3.5 min-w-[180px] bg-[#111e17] text-[#b8860b] font-bold text-sm rounded-2xl border border-[#b8860b]/35 cursor-pointer"
+              >
+                ⚖️ 밸런스 게임 30선
+              </motion.button>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+              {['7대 진단', '63 페르소나', '약 3분', '실천 챌린지'].map((chip) => (
+                <span
+                  key={chip}
+                  className="px-2.5 py-1 rounded-full text-[11px] font-bold text-slate-300 bg-white/5 border border-white/10"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
           </motion.div>
         </section>
 
         {/* ── 1.5. 오늘의 훈독 말씀 카드 ── */}
         <DailyWordCard compact />
 
-        {/* ── 2. 7 Diagnostics Grid (진단 도구 창) ── */}
+        {/* ── 2. 7 Diagnostics Grid — 토스급 카드 인터랙션 ── */}
         <section className="space-y-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white inline-block relative tracking-wide">
               7대 독립적 신앙 진단 도구
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-16 h-1 bg-[#b8860b] rounded-full"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-16 h-1 bg-[#b8860b] rounded-full" />
             </h2>
+            <p className="mt-5 text-slate-400 text-sm font-medium">
+              끌리는 카드를 눌러보세요. 지금 필요한 진단이 보일 거예요.
+            </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            <button 
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+            <motion.button 
+              type="button"
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+              whileHover={{ y: -4, scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => onNavigate?.('matcher')}
-              className="bg-[#111e17] rounded-3xl p-6 md:p-8 shadow-xl border border-[#0d5c3a]/20 hover:border-[#b8860b]/40 transition-colors flex items-center justify-between group cursor-pointer"
+              className="toss-card toss-press bg-[#111e17] rounded-3xl p-6 md:p-7 shadow-xl border border-[#0d5c3a]/20 flex items-center justify-between group cursor-pointer text-left"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#b8860b]/20 text-[#b8860b] rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#b8860b]/20 text-[#b8860b] rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
                   <Heart size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg">페르소나 궁합 분석</h3>
+                  <h3 className="font-bold text-white text-lg group-hover:text-[#fbbf24] transition-colors">페르소나 궁합 분석</h3>
                   <p className="text-sm text-slate-400">식구 간 섭리적 시너지 매칭</p>
                 </div>
               </div>
-              <ChevronRight className="text-[#b8860b] group-hover:translate-x-1 transition-transform" />
-            </button>
+              <ChevronRight className="text-[#b8860b] transition-transform duration-300 group-hover:translate-x-1.5" />
+            </motion.button>
 
             {mirrorIntros.map((mirror, index) => (
-              <article 
-                key={mirror.id} 
-                className="bg-[#111e17] rounded-3xl p-6 sm:p-8 shadow-xl border border-[#0d5c3a]/30 hover:border-[#b8860b]/50 hover:shadow-[#0d5c3a]/10 transition-all duration-300 flex flex-col h-full group"
+              <motion.article 
+                key={mirror.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 26,
+                  delay: Math.min(index * 0.05, 0.3),
+                }}
+                whileHover={{ y: -5 }}
+                className="toss-card bg-[#111e17] rounded-3xl p-6 sm:p-7 shadow-xl border border-[#0d5c3a]/30 flex flex-col h-full group"
               >
-                <div className="flex items-center gap-4 mb-6">
-                  <span className="text-4xl bg-[#0d5c3a]/20 p-3.5 rounded-2xl border border-[#0d5c3a]/30 shadow-inner group-hover:scale-110 transition-transform">{mirror.emoji}</span>
-                  <div className="text-left">
-                    <span className="text-[10px] text-[#b8860b] font-bold tracking-widest uppercase">Survey 0{index + 1}</span>
-                    <h3 className="text-xl font-bold text-white tracking-tight leading-snug">{mirror.title.split(' (')[0]}</h3>
+                <div className="flex items-center gap-4 mb-5">
+                  <span className="text-4xl bg-[#0d5c3a]/20 p-3.5 rounded-2xl border border-[#0d5c3a]/30 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                    {mirror.emoji}
+                  </span>
+                  <div className="text-left min-w-0">
+                    <span className="text-[10px] text-[#b8860b] font-bold tracking-widest uppercase">
+                      Survey 0{index + 1}
+                    </span>
+                    <h3 className="text-xl font-bold text-white tracking-tight leading-snug group-hover:text-[#fbbf24] transition-colors">
+                      {mirror.title.split(' (')[0]}
+                    </h3>
                   </div>
                 </div>
 
-                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 flex-grow word-keep text-left">
+                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-5 flex-grow word-keep text-left">
                   {mirror.desc}
                 </p>
 
-                <div className="bg-[#0b130f] rounded-2xl p-4 mb-6 border border-[#0d5c3a]/20 text-left">
-                  <p className="text-[11px] text-[#b8860b] font-bold mb-2.5 flex items-center gap-1.5"><Info size={12} /> 주요 측정 카테고리</p>
+                <div className="bg-[#0b130f] rounded-2xl p-4 mb-5 border border-[#0d5c3a]/20 text-left transition-colors duration-300 group-hover:border-[#b8860b]/25">
+                  <p className="text-[11px] text-[#b8860b] font-bold mb-2.5 flex items-center gap-1.5">
+                    <Info size={12} /> 주요 측정 카테고리
+                  </p>
                   <ul className="grid grid-cols-2 gap-2 text-[11px] text-slate-300 font-medium list-none">
                     {mirror.bullets?.slice(0, 4).map((bullet, idx) => (
                       <li key={idx} className="flex items-center gap-1.5 truncate">
@@ -185,29 +253,35 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
                   </ul>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-6">
+                <div className="flex flex-wrap gap-1.5 mb-5">
                   {mirror.tags.map(tag => (
-                    <span key={tag} className="text-[10px] font-bold text-[#b8860b] bg-[#b8860b]/10 px-2.5 py-1 rounded-full border border-[#b8860b]/20">
+                    <span key={tag} className="text-[10px] font-bold text-[#b8860b] bg-[#b8860b]/10 px-2.5 py-1 rounded-full border border-[#b8860b]/20 transition-colors group-hover:border-[#b8860b]/40">
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <button 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
                     onClick={() => handleSelectSurvey(mirror.id)}
-                    className="bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:brightness-110 transition-all shadow-md active:scale-95 cursor-pointer"
+                    className="toss-btn-primary bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                   >
                     진단 시작 <Zap size={14} />
-                  </button>
-                  <button 
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
                     onClick={() => handleBrowsePersona(mirror.id)}
-                    className="bg-[#111e17] text-[#b8860b] font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-[#b8860b]/30 hover:bg-[#b8860b]/10 transition-colors cursor-pointer"
+                    className="toss-btn-ghost bg-[#111e17] text-[#b8860b] font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-[#b8860b]/30 cursor-pointer"
                   >
                     유형 칼럼 <BookOpen size={14} />
-                  </button>
+                  </motion.button>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </section>
@@ -267,13 +341,18 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {personaDirectoryData[activeTab]?.map((persona, idx) => (
-                      <div 
-                        key={idx} 
+                      <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: Math.min(idx * 0.04, 0.24) }}
+                        whileHover={{ y: -3, scale: 1.01 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => {
                           triggerHaptic(15);
                           setSelectedPersona(persona);
                         }}
-                        className="bg-[#0b130f] border border-[#0d5c3a]/20 rounded-2xl p-5 hover:border-[#b8860b]/50 hover:shadow-lg hover:shadow-[#0d5c3a]/5 transition-all cursor-pointer text-left group flex flex-col justify-between"
+                        className="toss-card toss-press bg-[#0b130f] border border-[#0d5c3a]/20 rounded-2xl p-5 cursor-pointer text-left group flex flex-col justify-between"
                       >
                         <div>
                           <div className="flex items-center justify-between mb-2">
@@ -295,11 +374,11 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
                               </span>
                             ))}
                           </div>
-                          <span className="text-[11px] font-bold text-[#b8860b] flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
+                          <span className="text-[11px] font-bold text-[#b8860b] flex items-center gap-0.5 transition-transform duration-300 group-hover:translate-x-1">
                             칼럼 읽기 <ChevronRight size={12} />
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>

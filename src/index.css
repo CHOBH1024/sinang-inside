@@ -78,3 +78,156 @@
 .animate-gradient-xy {
   animation: gradient-xy 15s ease infinite;
 }
+
+/* ── Toss-level tactile UI (sinang-inside main) ─────────────── */
+.toss-press {
+  transition:
+    transform 0.14s cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease,
+    background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.toss-press:active {
+  transform: scale(0.97);
+}
+
+.toss-card {
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+  will-change: transform;
+}
+@media (hover: hover) and (pointer: fine) {
+  .toss-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 16px 40px rgba(13, 92, 58, 0.18),
+      0 4px 12px rgba(0, 0, 0, 0.25);
+    border-color: rgba(184, 134, 11, 0.45);
+  }
+}
+.toss-card:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+.toss-btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.14s cubic-bezier(0.2, 0, 0, 1),
+    filter 0.2s ease,
+    box-shadow 0.25s ease;
+}
+.toss-btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 45%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .toss-btn-primary:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 10px 28px rgba(13, 92, 58, 0.35);
+  }
+  .toss-btn-primary:hover::after {
+    transform: translateX(120%);
+  }
+}
+.toss-btn-primary:active {
+  transform: scale(0.97);
+}
+
+.toss-btn-ghost {
+  transition:
+    transform 0.14s cubic-bezier(0.2, 0, 0, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .toss-btn-ghost:hover {
+    background-color: rgba(184, 134, 11, 0.12);
+    border-color: rgba(184, 134, 11, 0.5);
+  }
+}
+.toss-btn-ghost:active {
+  transform: scale(0.97);
+}
+
+@keyframes toss-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.toss-rise {
+  animation: toss-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.toss-rise-d1 {
+  animation-delay: 0.05s;
+}
+.toss-rise-d2 {
+  animation-delay: 0.1s;
+}
+.toss-rise-d3 {
+  animation-delay: 0.15s;
+}
+.toss-rise-d4 {
+  animation-delay: 0.2s;
+}
+
+@keyframes soft-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+.soft-glow-pulse {
+  animation: soft-glow 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toss-press,
+  .toss-card,
+  .toss-btn-primary,
+  .toss-btn-ghost {
+    transition: none;
+  }
+  .toss-press:active,
+  .toss-card:hover,
+  .toss-card:active,
+  .toss-btn-primary:active,
+  .toss-btn-ghost:active {
+    transform: none;
+  }
+  .toss-btn-primary::after {
+    display: none;
+  }
+  .toss-rise,
+  .toss-rise-d1,
+  .toss-rise-d2,
+  .toss-rise-d3,
+  .toss-rise-d4,
+  .soft-glow-pulse {
+    animation: none !important;
+  }
+}
