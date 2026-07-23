@@ -88,84 +88,88 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
         </div>
       </header>
 
-      {/* 전체 메인 레이아웃 */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 sm:space-y-24">
-        
-        {/* ── 0. 신앙 레벨 카드 (게이미피케이션) ── */}
-        <UserLevelCard />
+      {/* 전체 메인 레이아웃 — 히어로 최상단 (3초 임팩트) */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12 sm:space-y-20">
 
-        {/* ── 0.5. 데일리 실천 허브 (스스로 실천하는 신앙 엔진) ── */}
-        <DailyPracticeHub />
-
-        {/* ── 1. Hero — 3초 안에 '나를 위한 것' 느낌 ── */}
-        <section className="text-center space-y-5 pt-6 pb-10 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-b from-[#0d5c3a]/25 via-[#0d5c3a]/5 to-transparent p-6 sm:p-10 border border-[#0d5c3a]/15">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[28rem] h-[28rem] bg-[#0d5c3a]/20 rounded-full blur-[100px] pointer-events-none soft-glow-pulse" />
-          <div className="absolute -right-10 top-10 w-40 h-40 bg-[#b8860b]/10 rounded-full blur-[60px] pointer-events-none" />
+        {/* ── 0. Hero — 3초 안에 '나를 위한 신앙 진단' ── */}
+        <section className="faith-hero text-center space-y-5 pt-4 pb-8 sm:pt-6 sm:pb-10 relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-[#0d5c3a]/15 p-6 sm:p-12 border border-[#b8860b]/20 shadow-[0_0_0_1px_rgba(13,92,58,0.2),0_24px_64px_rgba(0,0,0,0.35)]">
+          <div className="faith-hero-mesh soft-glow-pulse" />
+          <div className="faith-hero-grid" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[32rem] h-[20rem] bg-[#b8860b]/10 rounded-full blur-[100px] pointer-events-none" />
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+            transition={{ type: 'spring', stiffness: 280, damping: 22 }}
             className="relative z-10 space-y-4"
           >
             <motion.span
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.08 }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wide text-[#b8860b] bg-[#b8860b]/10 border border-[#b8860b]/30"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wide text-[#fcd34d] bg-[#b8860b]/15 border border-[#b8860b]/40 shadow-[0_0_24px_rgba(184,134,11,0.2)]"
             >
-              🕊️ 오늘, 나의 신앙 결을 비춰보세요
+              🕊️ 지금 이 순간, 당신을 위한 신앙 진단
             </motion.span>
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white flex flex-col items-center justify-center gap-1.5">
-              <span className="text-[#b8860b] text-xs sm:text-sm font-bold tracking-[0.22em] uppercase">
-                Theological Diagnostics
+            <h1 className="text-[1.85rem] sm:text-5xl md:text-6xl font-black tracking-tight text-white flex flex-col items-center justify-center gap-2">
+              <span className="text-[#b8860b]/90 text-[10px] sm:text-xs font-bold tracking-[0.28em] uppercase">
+                Sinang Inside · For You
               </span>
-              <span className="leading-[1.15]">
-                3분이면 알 수 있는
-                <br className="sm:hidden" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fbbf24] via-[#b8860b] to-[#86efac]">
-                  {' '}나의 신앙 성향
+              <span className="leading-[1.12] word-keep">
+                3초면 느껴져요
+                <br />
+                <span className="faith-title-shine">
+                  이건 나를 위한 신앙 진단
                 </span>
               </span>
             </h1>
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto word-keep font-medium">
-              7가지 진단으로 기도·말씀·관계·사명의 결을 읽어드려요.
-              <span className="hidden sm:inline"> </span>
+            <p className="text-slate-300/90 text-sm sm:text-base leading-relaxed max-w-xl mx-auto word-keep font-medium">
+              기도·말씀·관계·사명의 결을 읽고,
               <br className="sm:hidden" />
-              결과는 페르소나와 실천 챌린지로 이어집니다.
+              <span className="text-white font-semibold"> 나만의 페르소나</span>와
+              <span className="text-[#fcd34d] font-semibold"> 실천 챌린지</span>로 이어져요.
             </p>
             <p className="sr-only">{seoBio}</p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-3">
               <motion.button
                 type="button"
-                whileHover={{ scale: 1.02, y: -1 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleSelectSurvey('survey-spirituality')}
-                className="toss-btn-primary inline-flex items-center justify-center gap-2 px-7 py-3.5 min-w-[200px] bg-gradient-to-r from-[#0d5c3a] to-[#2a6f97] text-white font-black text-sm sm:text-base rounded-2xl shadow-lg shadow-[#0d5c3a]/30 cursor-pointer"
+                className="toss-btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 min-w-[220px] bg-gradient-to-r from-[#0d5c3a] via-[#127a4d] to-[#2a6f97] text-white font-black text-sm sm:text-base rounded-2xl shadow-[0_12px_36px_rgba(13,92,58,0.45)] cursor-pointer"
               >
-                <Sparkles size={16} /> 심정영성 진단 시작
+                <Sparkles size={17} /> 지금 바로 진단 시작
               </motion.button>
               <motion.button
                 type="button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => onNavigate && onNavigate('balanceGame')}
-                className="toss-btn-ghost inline-flex items-center justify-center gap-2 px-6 py-3.5 min-w-[180px] bg-[#111e17] text-[#b8860b] font-bold text-sm rounded-2xl border border-[#b8860b]/35 cursor-pointer"
+                className="toss-btn-ghost inline-flex items-center justify-center gap-2 px-6 py-3.5 min-w-[180px] bg-black/30 text-[#fcd34d] font-bold text-sm rounded-2xl border border-[#b8860b]/40 backdrop-blur-md cursor-pointer"
               >
-                ⚖️ 밸런스 게임 30선
+                ⚖️ 가볍게 밸런스 게임
               </motion.button>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-              {['7대 진단', '63 페르소나', '약 3분', '실천 챌린지'].map((chip) => (
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              {[
+                { t: '약 3분', e: '⏱' },
+                { t: '7대 진단', e: '✨' },
+                { t: '63 페르소나', e: '🧬' },
+                { t: '실천 챌린지', e: '🔥' },
+              ].map((chip) => (
                 <span
-                  key={chip}
-                  className="px-2.5 py-1 rounded-full text-[11px] font-bold text-slate-300 bg-white/5 border border-white/10"
+                  key={chip.t}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-slate-200 bg-white/5 border border-white/10 backdrop-blur-sm"
                 >
-                  {chip}
+                  <span aria-hidden>{chip.e}</span> {chip.t}
                 </span>
               ))}
             </div>
           </motion.div>
         </section>
+
+        {/* ── 1. 신앙 레벨 + 실천 허브 ── */}
+        <UserLevelCard />
+        <DailyPracticeHub />
 
         {/* ── 1.5. 오늘의 훈독 말씀 카드 ── */}
         <DailyWordCard compact />
@@ -192,7 +196,7 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
               whileHover={{ y: -4, scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onNavigate?.('matcher')}
-              className="toss-card toss-press bg-[#111e17] rounded-3xl p-6 md:p-7 shadow-xl border border-[#0d5c3a]/20 flex items-center justify-between group cursor-pointer text-left"
+              className="diag-card toss-press bg-[#111e17] rounded-3xl p-6 md:p-7 shadow-xl border border-[#0d5c3a]/25 flex items-center justify-between group cursor-pointer text-left"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-[#b8860b]/20 text-[#b8860b] rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
@@ -218,8 +222,7 @@ export const Dashboard = ({ onSelectSurvey, onNavigate }: DashboardProps) => {
                   damping: 26,
                   delay: Math.min(index * 0.05, 0.3),
                 }}
-                whileHover={{ y: -5 }}
-                className="toss-card bg-[#111e17] rounded-3xl p-6 sm:p-7 shadow-xl border border-[#0d5c3a]/30 flex flex-col h-full group"
+                className="diag-card bg-[#111e17] rounded-3xl p-6 sm:p-7 shadow-xl border border-[#0d5c3a]/30 flex flex-col h-full group"
               >
                 <div className="flex items-center gap-4 mb-5">
                   <span className="text-4xl bg-[#0d5c3a]/20 p-3.5 rounded-2xl border border-[#0d5c3a]/30 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">

@@ -93,14 +93,14 @@ const variants = {
     opacity: 1,
     scale: 1,
     filter: 'blur(0px)',
-    transition: { type: 'spring', stiffness: 300, damping: 26, mass: 0.8 },
+    transition: { type: 'spring' as const, stiffness: 300, damping: 26, mass: 0.8 },
   },
   exit: (dir: number) => ({
     x: dir < 0 ? '100%' : '-100%',
     opacity: 0,
     scale: 0.94,
     filter: 'blur(8px)',
-    transition: { type: 'spring', stiffness: 300, damping: 26, mass: 0.8 },
+    transition: { type: 'spring' as const, stiffness: 300, damping: 26, mass: 0.8 },
   }),
 };
 

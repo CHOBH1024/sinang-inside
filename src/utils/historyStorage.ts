@@ -1,4 +1,4 @@
-import { UserInfo } from './types';
+import { UserInfo } from '../types';
 
 export interface SurveyHistoryRecord {
   id: string; // unique id for the record

@@ -258,27 +258,40 @@ export const SurveyResults = ({ survey, answers, mode = 'general', userInfo, onR
     ? `linear-gradient(145deg, rgba(0,0,0,0.75), rgba(0,0,0,0.6)), linear-gradient(135deg, ${cardTheme.from}18, ${cardTheme.to}18)`
     : `linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.85)), linear-gradient(135deg, ${cardTheme.from}12, ${cardTheme.to}12)`;
 
-  // ========= PHASE 0/1: Reveal Screen (Apple Fluid + Pulse) =========
+  // ========= PHASE 0/1: Reveal Screen — 시각 임팩트 강화 =========
   if (revealPhase < 2) {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-black relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${cardTheme.from}33, ${cardTheme.to}33)` }} />
-        <motion.div className="absolute inset-0 bg-black/50" animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ repeat: Infinity, duration: 1.5 }} />
-        <motion.div className="absolute left-0 w-full h-[2px] z-0" style={{ boxShadow: `0 0 20px 2px ${cardTheme.from}`, background: `linear-gradient(90deg, transparent, ${cardTheme.from}, white, ${cardTheme.to}, transparent)` }} animate={{ top: ['-5%', '105%'] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }} />
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse 80% 60% at 50% 40%, ${cardTheme.from}40, transparent 60%), linear-gradient(160deg, #020202 0%, ${cardTheme.to}22 55%, #020202 100%)` }} />
+        <motion.div className="absolute inset-0 bg-black/40" animate={{ opacity: [0.25, 0.55, 0.25] }} transition={{ repeat: Infinity, duration: 2 }} />
+        <div className="result-reveal-ring" style={{ borderColor: `${cardTheme.from}55` }} />
+        <div className="result-reveal-ring" style={{ borderColor: `${cardTheme.to}40`, animationDelay: '0.8s' }} />
+        <motion.div className="absolute left-0 w-full h-[2px] z-0" style={{ boxShadow: `0 0 24px 3px ${cardTheme.from}`, background: `linear-gradient(90deg, transparent, ${cardTheme.from}, white, ${cardTheme.to}, transparent)` }} animate={{ top: ['-5%', '105%'] }} transition={{ repeat: Infinity, duration: 1.15, ease: 'linear' }} />
         
-        <div className="z-10 text-center px-8 relative">
-          <motion.p animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1 }} className="text-white/70 text-xs font-black uppercase tracking-[0.4em] mb-8">
-            당신의 유형을 분석 중...
+        <div className="z-10 text-center px-8 relative max-w-lg">
+          <motion.p
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ repeat: Infinity, duration: 1.2 }}
+            className="text-white/80 text-[11px] font-black uppercase tracking-[0.35em] mb-3"
+          >
+            {revealPhase === 0 ? '당신만을 위한 신앙 결을 읽는 중' : '확정되었습니다'}
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-white/45 text-xs font-bold mb-8 tracking-wide"
+          >
+            이건 템플릿이 아니라, 당신의 응답에서 나온 결과예요
           </motion.p>
           <AnimatePresence mode="wait">
             <motion.div key={revealFakeType} initial={{ opacity: 0, scale: 0.4, filter: 'blur(20px)', y: 20 }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)', y: 0 }} exit={{ opacity: 0, scale: 1.6, filter: 'blur(20px)', y: -20 }} transition={{ duration: 0.08 }} className="mb-4">
-              <span className={`text-5xl sm:text-6xl font-black block mb-2 ${revealPhase === 1 ? 'text-white' : 'text-white/60'}`} style={revealPhase === 1 ? { textShadow: `0 0 40px ${cardTheme.from}, 0 0 80px ${cardTheme.to}` } : {}}>
+              <span className={`text-5xl sm:text-6xl font-black block mb-2 word-keep ${revealPhase === 1 ? 'text-white' : 'text-white/55'}`} style={revealPhase === 1 ? { textShadow: `0 0 40px ${cardTheme.from}, 0 0 90px ${cardTheme.to}` } : {}}>
                 {revealFakeType}
               </span>
             </motion.div>
           </AnimatePresence>
           {revealPhase === 1 && (
-            <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 8, stiffness: 120 }} className="text-8xl select-none" style={{ filter: `drop-shadow(0 0 30px ${cardTheme.from})` }}>
+            <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 8, stiffness: 120 }} className="text-8xl select-none mt-2" style={{ filter: `drop-shadow(0 0 36px ${cardTheme.from})` }}>
               {resultData.emoji}
             </motion.div>
           )}
@@ -321,38 +334,41 @@ export const SurveyResults = ({ survey, answers, mode = 'general', userInfo, onR
 
       <div className="flex-1 overflow-y-auto px-4 pt-20 pb-24 space-y-6 relative z-10 hide-scrollbar">
         
-        {/* 📸 Main Photo Card */}
+        {/* 📸 Main Photo Card — 결과 임팩트 */}
         <motion.div
           id="insta-photocard"
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          initial={{ opacity: 0, scale: 0.88, y: 36 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
-          className="w-full relative overflow-hidden rounded-[3rem] border-[1px] border-white/20 flex flex-col items-center justify-between p-8"
+          transition={{ duration: 0.85, type: 'spring', bounce: 0.35 }}
+          className="result-card-glow w-full relative overflow-hidden rounded-[2.5rem] sm:rounded-[3rem] border border-white/25 flex flex-col items-center justify-between p-7 sm:p-8"
           style={{
             aspectRatio: cardFormat === '9:16' ? '9/16' : '1/1',
             background: cardBg,
             ...cardPattern.style,
-            boxShadow: `0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1)`,
+            ['--result-glow' as string]: cardTheme.from,
           }}
         >
           {/* Card Top Glow */}
-          <div className="absolute top-0 left-0 w-full h-[4px] rounded-t-[3rem]" style={{ background: `linear-gradient(90deg, ${cardTheme.from}, ${cardTheme.to})`, boxShadow: `0 0 20px ${cardTheme.from}` }} />
-          <div className="absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[80px] opacity-40 pointer-events-none" style={{ background: cardTheme.from }} />
-          <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full blur-[80px] opacity-40 pointer-events-none" style={{ background: cardTheme.to }} />
+          <div className="absolute top-0 left-0 w-full h-[4px] rounded-t-[3rem]" style={{ background: `linear-gradient(90deg, ${cardTheme.from}, ${cardTheme.to})`, boxShadow: `0 0 28px ${cardTheme.from}` }} />
+          <div className="absolute -top-32 -right-32 w-72 h-72 rounded-full blur-[90px] opacity-50 pointer-events-none" style={{ background: cardTheme.from }} />
+          <div className="absolute -bottom-32 -left-32 w-72 h-72 rounded-full blur-[90px] opacity-45 pointer-events-none" style={{ background: cardTheme.to }} />
 
           <div className="relative z-10 w-full text-center mt-2">
-            <motion.span animate={{ opacity: [0.7, 1, 0.7] }} transition={{ repeat: Infinity, duration: 2 }} className="inline-block text-[9px] font-black tracking-[0.25em] uppercase py-1.5 px-4 rounded-full mb-6" style={{ background: `linear-gradient(90deg, ${cardTheme.from}40, ${cardTheme.to}40)`, color: 'white', border: `1px solid ${cardTheme.from}50` }}>
-              {survey.name} {lang === 'ko' ? '진단 결과' : 'Result'}
+            <motion.span animate={{ opacity: [0.75, 1, 0.75] }} transition={{ repeat: Infinity, duration: 2 }} className="inline-block text-[9px] font-black tracking-[0.25em] uppercase py-1.5 px-4 rounded-full mb-3" style={{ background: `linear-gradient(90deg, ${cardTheme.from}45, ${cardTheme.to}45)`, color: 'white', border: `1px solid ${cardTheme.from}55` }}>
+              {lang === 'ko' ? '당신만을 위한 결과' : 'Just for you'} · {survey.name}
             </motion.span>
+            <p className={`text-[10px] font-bold mb-4 tracking-wide ${cardDark ? 'text-white/50' : 'text-slate-500'}`}>
+              이 페르소나는 당신의 응답 패턴에서 태어났어요
+            </p>
 
-            <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.2 }} className="text-7xl sm:text-8xl mb-4 select-none" style={{ filter: `drop-shadow(0 20px 30px rgba(0,0,0,0.3))` }}>
+            <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.15 }} className="text-7xl sm:text-8xl mb-3 select-none" style={{ filter: `drop-shadow(0 16px 36px ${cardTheme.from}66)` }}>
               {resultData.emoji}
             </motion.div>
 
-            <h1 className={`text-4xl sm:text-5xl font-black mb-3 leading-tight word-keep ${cardDark ? 'text-white' : 'text-slate-900'}`} style={cardDark ? { textShadow: `0 0 30px ${cardTheme.from}80` } : {}}>
+            <h1 className={`text-4xl sm:text-5xl font-black mb-3 leading-tight word-keep ${cardDark ? 'text-white' : 'text-slate-900'}`} style={cardDark ? { textShadow: `0 0 36px ${cardTheme.from}99, 0 4px 24px rgba(0,0,0,0.4)` } : {}}>
               {resultData.persona}
             </h1>
-            <p className={`text-xs font-bold mb-5 px-4 py-2 rounded-2xl inline-block word-keep backdrop-blur-md ${cardDark ? 'text-white/90 bg-white/10 border border-white/10' : 'text-slate-800 bg-black/5'}`}>
+            <p className={`text-xs sm:text-sm font-bold mb-5 px-4 py-2.5 rounded-2xl inline-block word-keep backdrop-blur-md leading-relaxed ${cardDark ? 'text-white/95 bg-white/10 border border-white/15' : 'text-slate-800 bg-black/5'}`}>
               {resultData.headline}
             </p>
 
@@ -415,7 +431,7 @@ export const SurveyResults = ({ survey, answers, mode = 'general', userInfo, onR
 
             <button
               onClick={handlePrescribeChallenge}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#b8860b] to-[#d4a017] text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer"
+              className="toss-btn-primary w-full py-4 rounded-2xl bg-gradient-to-r from-[#b8860b] to-[#d4a017] text-[#0b130f] font-black text-sm flex items-center justify-center gap-2 shadow-[0_12px_32px_rgba(184,134,11,0.35)] cursor-pointer"
             >
               이 챌린지로 오늘 첫 걸음 떼기 <ChevronRight size={16} />
             </button>

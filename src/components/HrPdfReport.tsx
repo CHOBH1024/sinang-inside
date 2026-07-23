@@ -128,7 +128,7 @@ export const HrPdfReport = ({ survey, answers, userInfo, resultData, lang = 'ko'
           </div>
           <div style={{ width: '300px', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', borderRadius: '16px' }}>
              {/* PDF 렌더링용 간소화된 3D 차트 대체 또는 기존 컴포넌트 캡처 */}
-             <RadarChart3D data={radarData} color="#0d5c3a" />
+             <RadarChart3D data={radarData} name="radar" strokeColor="#0d5c3a" />
           </div>
         </div>
 
